@@ -1,25 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './components/Home';
+import ModelCardUpload from './components/ModelCardUpload';
+import ModelCardDetail from './components/ModelCardDetail';
+import ModelMarketplace from './components/ModelMarketplace';
+import ModelCardTemplate from './components/ModelCardTemplate'
+import Layout from './components/Layout';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/home" element={<Layout><Home /></Layout>} />
+        <Route path="/modelcardupload" element={<Layout><ModelCardUpload /></Layout>} />
+        <Route path="/card/:id" element={<Layout><ModelCardDetail /></Layout>} />
+        <Route path="/marketplace" element={<Layout><ModelMarketplace /></Layout>} />
+        <Route path="/create" element={<Layout><ModelCardTemplate /></Layout>} />
+      </Routes>
+    </Router>
   );
 }
 
 export default App;
+

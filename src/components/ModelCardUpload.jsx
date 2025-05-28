@@ -1,0 +1,56 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const ModelCardManager = () => {
+  const [modelCards, setModelCards] = useState(() => {
+    const stored = localStorage.getItem('modelCards');
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  const navigate = useNavigate();
+
+  // Persist to localStorage on every change
+  useEffect(() => {
+    localStorage.setItem('modelCards', JSON.stringify(modelCards));
+  }, [modelCards]);
+
+  const handleUpload = (e) => {
+    const files = e.target.files;
+    Array.from(files).forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const json = JSON.parse(event.target.result);
+          setModelCards((prev) => [...prev, json]);
+        } catch (err) {
+          alert(`Invalid JSON: ${file.name}`);
+        }
+      };
+      reader.readAsText(file);
+    });
+  };
+
+  return (
+    <div className="container mt-4">
+      <h2>Upload Model Cards</h2>
+      <input type="file" accept=".json" multiple onChange={handleUpload} className="form-control mb-3" />
+      <div className="row">
+        {modelCards.map((card, index) => (
+          <div className="col-md-4" key={index}>
+            <div className="card mb-3">
+              <div className="card-body">
+                <h5 className="card-title">{card["model_details"]?.name || `Card ${index + 1}`}</h5>
+                <p className="card-text">{card["model_details"]?.overview || 'No description available.'}</p>
+                <button className="btn btn-primary" onClick={() => navigate(`/card/${index}`)}>
+                  View Full Card
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default ModelCardManager;
