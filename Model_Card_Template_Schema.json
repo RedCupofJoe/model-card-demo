@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AI Model Card",
+  "type": "object",
+  "properties": {
+    "Schema Version": {
+      "type": "string"
+    },
+    "Model Details": {
+      "type": "object",
+      "properties": {
+        "Name": { "type": "string" },
+        "Overiew": { "type": "string" },
+        "Classification": {
+          "type": "string",
+          "enum": ["Unclassified", "CUI", "Secret", "Top Secret"]
+        },
+        "Type": { "type": "string" },
+        "Training Methodology": { "type": "string" },
+        "Owners": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "contact": { "type": "string", "format": "email" }
+          },
+          "required": ["name", "contact"]
+        },
+        "Project Sponsor": { "type": "string" },
+        "Development Organization": { "type": "string" },
+        "version": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "date": { "type": "string", "format": "date" },
+            "Model differences": { "type": "string" }
+          },
+          "required": ["name", "date"]
+        },
+        "license": { "type": "string" },
+        "references": {
+          "type": "array",
+          "items": { "type": "string", "format": "uri" }
+        },
+        "citation": { "type": "string" }
+      },
+      "required": ["Name", "Classification", "Type", "Training Methodology"]
+    },
+    "model_parameters": {
+      "type": "object",
+      "properties": {
+        "model_architecture": { "type": "string" },
+        "data": {
+          "type": "object",
+          "properties": {
+            "train": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "link": { "type": "string", "format": "uri" },
+                "sensitive": { "type": "boolean" }
+              },
+              "required": ["name", "link", "sensitive"]
+            },
+            "eval": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "link": { "type": "string", "format": "uri" },
+                "sensitive": { "type": "boolean" }
+              },
+              "required": ["name", "link", "sensitive"]
+            }
+          },
+          "required": ["train", "eval"]
+        },
+        "input_format": { "type": "string" },
+        "output_format": { "type": "string" }
+      },
+      "required": ["model_architecture", "data", "input_format", "output_format"]
+    },
+    "quantitative_analysis": {
+      "type": "object",
+      "properties": {
+        "performance_metrics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string" },
+              "value": { "type": "number" },
+              "confidence_interval": {
+                "type": "object",
+                "properties": {
+                  "lower_bound": { "type": "number" },
+                  "upper_bound": { "type": "number" }
+                },
+                "required": ["lower_bound", "upper_bound"]
+              }
+            },
+            "required": ["type", "value"]
+          }
+        }
+      },
+      "required": ["performance_metrics"]
+    },
+    "considerations": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "use_cases": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "limitations": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "tradeoffs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "ethical_considerations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "mitigation_strategy": { "type": "string" }
+            },
+            "required": ["name", "mitigation_strategy"]
+          }
+        }
+      }
+    }
+  },
+  "required": ["Schema Version", "Model Details", "model_parameters", "quantitative_analysis", "considerations"]
+}

@@ -1,0 +1,96 @@
+{
+  "Schema Version": "V1.0",
+  "Model Details": {
+    "Name": "Name of the model",
+    "Overiew": "Model Overview",
+    "Classification": "Unclassified, CUI, Secret, or Top Secret",
+    "Type": "What type of model?",
+    "Training Methodology": "Training Methodology used to train the model",
+    "Owners": {
+        "Name": "Jane Smith",
+        "Contact": "jane@example.com"
+      }
+    ,
+    "Project Sponsor": "Sponsoring Agency",
+    "Development Organization": "Army unit or DoD entity responsible for development",
+    "Version": {
+      "Name": "v1.0",
+      "Date": "The date the version was released.",
+      "Model differneces": "The changes from the previous version"
+    },
+    "License": "The model's license for use",
+    "References": "Links providing more information about the model",
+    "Citation": "Smith et al. 2024",
+    "Visibility": "The method to how users can view the model",
+    "Requirements": {
+        "Infrastructure": "What are the deployment dependencies?",
+        "Platform Deployment Constraints": "How is the model optimized?",
+        "Other Requirements": "Any other special requirements or constraints"
+    }
+  },
+  "Model Provenance": {
+    "Name": "Name of the dataset",
+    "Link": "Link to the data card",
+    "Does this dataset contain human or other sensitive information?": "",
+    "Model Origin": "What is the model origin?",
+    "Data Lineage": "",
+    "Dependencies": "What are the model dependencies?",
+    "Open source": "Is the model open source? If yes, Please provide a link to the source of the model download"
+  },
+  "Model Parameters": {
+    "Model Architecture": "The architeture of the model",
+    "Data Card": "Pointer to the datasets(data card) used to train and evaluate the model",
+    "Security Card": "Pointer to the security card which describes how the model is secured",
+    "Fomat": "Format of the model",
+    "Input Format": "The data format for inputs to the model",
+    "Output Format": "THe data format for outputs from the model"
+  },
+  "Model Analysis": {
+    "Performance Metrics": 
+      {
+        "Type": "Accuracy",
+        "Value": 0.95,
+        "Confidence Interval": {
+          "Lower Bound": 0.93,
+          "Upper Bound": 0.97
+        },
+        "Threshold": "The decision threshold the metric was computed on",
+        "Slice": "The name of the slice this metric was computed on. By default, assume this metric is not sliced."
+      },
+      
+    "Evaluation": {
+        "Objective": "Overall Objective of T&E",
+        "Benchmark Standard": "Benchmark Standard used",
+        "Responsible AI":{
+            "Responsible": "Define model use assumptions, human users, guardrails, and limitations",
+            "Equitable": "Define known biase in model performance and/or caveats for use on new datasets. Include methods and tools used to characterize bias",
+            "Traceable": "Link to relevant TORC evaluations",
+            "Reliable": "Link to relevant T&E results",
+            "Governable": "Describe human user groups, guardrails, and operational feedback loop"
+        },
+        "Confusers": "The class of objects that the model consistently mistakes for a different class",
+        "Robustness": "Data pertubation testing or model performance on novel scenarios", 
+        "Adversarial Robustness": "The specific vulnerabilities that were tested, assumptions for level of access, tactics used, and results",
+        "Explainability": "The frameworks used to describe model processing and outputs",
+        "Customer Performance Thresholds": "The level of performance required and any additional metrics needed beyond standard Acme program or benchmark",
+        "Decision Thresholds": "Criteria or cut-off points for data classification",
+        "Assumptions": "All assumptions made during testing and evaluation",
+        "Limitations": "Caveats that may impact T&E Results"
+    }
+  },
+  "Considerations": {
+    "Users": ["Who are the intended users of the model?"],
+    "Use Cases": ["What are the intended use cases of the model"],
+    "Limitations": ["What are the known technical Limitations of the model? e.g. What kind(s) of data should the model be expected not to perform well on? What are the factors that might degraade model performance?"],
+    "Tradeoffs": ["What are the known tradeoffs in Accuracy/performance of the model?"],
+    "Ethical Considerations":
+      {
+        "Name": "What are the ethical risks involved in the application of this model?",
+        "Mitigation Strategy": "What are the strategies used/employed to mitigate the risk?"
+      }
+  },
+  "Risk": {
+    "Type": "The name/type of risk",
+    "Mitigation Strategy": "Strategy used to address this risk?"
+  }
+}
