@@ -18,7 +18,7 @@ const ModelMarketplace = () => {
   };
 
   const filteredCards = modelCards.filter((card) =>
-    card['model_details']?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    card['Model Details']?.Name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -40,8 +40,8 @@ const ModelMarketplace = () => {
           <Col key={index}>
             <Card>
               <Card.Body>
-                <Card.Title>{card['model_details']?.name || 'Unnamed Model'}</Card.Title>
-                <Card.Text>{card['model_details']?.overview}</Card.Text>
+                <Card.Title>{card['Model Details']?.Name || 'Unnamed Model'}</Card.Title>
+                <Card.Text>{card['Model Details']?.Overview}</Card.Text>
                 <Button as={Link} to={`/card/${index}`} variant="primary" className="me-2">
                   View
                 </Button>

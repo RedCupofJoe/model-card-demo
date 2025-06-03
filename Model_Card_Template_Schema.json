@@ -1,7 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "AI Model Card",
+  "title": "Model Documentation Schema",
   "type": "object",
+  "required": ["Schema Version", "Model Details"],
   "properties": {
     "Schema Version": {
       "type": "string"
@@ -10,7 +11,7 @@
       "type": "object",
       "properties": {
         "Name": { "type": "string" },
-        "Overiew": { "type": "string" },
+        "Overview": { "type": "string" },
         "Classification": {
           "type": "string",
           "enum": ["Unclassified", "CUI", "Secret", "Top Secret"]
@@ -19,122 +20,142 @@
         "Training Methodology": { "type": "string" },
         "Owners": {
           "type": "object",
+          "required": ["Name", "Contact"],
           "properties": {
-            "name": { "type": "string" },
-            "contact": { "type": "string", "format": "email" }
-          },
-          "required": ["name", "contact"]
+            "Name": { "type": "string" },
+            "Contact": { "type": "string", "format": "email" }
+          }
         },
         "Project Sponsor": { "type": "string" },
         "Development Organization": { "type": "string" },
-        "version": {
+        "Version": {
           "type": "object",
+          "required": ["Name", "Date", "Model differneces"],
           "properties": {
-            "name": { "type": "string" },
-            "date": { "type": "string", "format": "date" },
+            "Name": { "type": "string" },
+            "Date": { "type": "string" },
             "Model differences": { "type": "string" }
-          },
-          "required": ["name", "date"]
+          }
         },
-        "license": { "type": "string" },
-        "references": {
-          "type": "array",
-          "items": { "type": "string", "format": "uri" }
-        },
-        "citation": { "type": "string" }
-      },
-      "required": ["Name", "Classification", "Type", "Training Methodology"]
-    },
-    "model_parameters": {
-      "type": "object",
-      "properties": {
-        "model_architecture": { "type": "string" },
-        "data": {
+        "License": { "type": "string" },
+        "References": { "type": "string" },
+        "Citation": { "type": "string" },
+        "Visibility": { "type": "string" },
+        "Requirements": {
           "type": "object",
           "properties": {
-            "train": {
-              "type": "object",
-              "properties": {
-                "name": { "type": "string" },
-                "link": { "type": "string", "format": "uri" },
-                "sensitive": { "type": "boolean" }
-              },
-              "required": ["name", "link", "sensitive"]
-            },
-            "eval": {
-              "type": "object",
-              "properties": {
-                "name": { "type": "string" },
-                "link": { "type": "string", "format": "uri" },
-                "sensitive": { "type": "boolean" }
-              },
-              "required": ["name", "link", "sensitive"]
-            }
-          },
-          "required": ["train", "eval"]
-        },
-        "input_format": { "type": "string" },
-        "output_format": { "type": "string" }
-      },
-      "required": ["model_architecture", "data", "input_format", "output_format"]
-    },
-    "quantitative_analysis": {
-      "type": "object",
-      "properties": {
-        "performance_metrics": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "type": { "type": "string" },
-              "value": { "type": "number" },
-              "confidence_interval": {
-                "type": "object",
-                "properties": {
-                  "lower_bound": { "type": "number" },
-                  "upper_bound": { "type": "number" }
-                },
-                "required": ["lower_bound", "upper_bound"]
-              }
-            },
-            "required": ["type", "value"]
-          }
-        }
-      },
-      "required": ["performance_metrics"]
-    },
-    "considerations": {
-      "type": "object",
-      "properties": {
-        "users": {
-          "type": "array",
-          "items": { "type": "string" }
-        },
-        "use_cases": {
-          "type": "array",
-          "items": { "type": "string" }
-        },
-        "limitations": {
-          "type": "array",
-          "items": { "type": "string" }
-        },
-        "tradeoffs": {
-          "type": "array",
-          "items": { "type": "string" }
-        },
-        "ethical_considerations": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": { "type": "string" },
-              "mitigation_strategy": { "type": "string" }
-            },
-            "required": ["name", "mitigation_strategy"]
+            "Infrastructure": { "type": "string" },
+            "Platform Deployment Constraints": { "type": "string" },
+            "Other Requirements": { "type": "string" }
           }
         }
       }
+    },
+    "Model Provenance": {
+      "type": "object",
+      "properties": {
+        "Name": { "type": "string" },
+        "Link": { "type": "string", "format": "uri" },
+        "Does this dataset contain human or other sensitive information?": { "type": "boolean" },
+        "Model Origin": { "type": "string" },
+        "Data Lineage": { "type": "string" },
+        "Dependencies": { "type": "string" },
+        "Open source": { "type": "string" }
+      }
+    },
+    "Model Parameters": {
+      "type": "object",
+      "properties": {
+        "Model Architecture": { "type": "string" },
+        "Data Card": { "type": "string", "format": "uri" },
+        "Security Card": { "type": "string", "format": "uri" },
+        "Format": { "type": "string" },
+        "Input Format": { "type": "string" },
+        "Output Format": { "type": "string" }
+      }
+    },
+    "Model Analysis": {
+      "type": "object",
+      "properties": {
+        "Performance Metrics": {
+          "type": "object",
+          "required": ["Type", "Value", "Confidence Interval"],
+          "properties": {
+            "Type": { "type": "string" },
+            "Value": { "type": "number" },
+            "Confidence Interval": {
+              "type": "object",
+              "required": ["Lower Bound", "Upper Bound"],
+              "properties": {
+                "Lower Bound": { "type": "number" },
+                "Upper Bound": { "type": "number" }
+              }
+            },
+            "Threshold": { "type": "string" },
+            "Slice": { "type": "string" }
+          }
+        },
+        "Evaluation": {
+          "type": "object",
+          "properties": {
+            "Objective": { "type": "string" },
+            "Benchmark Standard": { "type": "string" },
+            "Responsible AI": {
+              "type": "object",
+              "properties": {
+                "Responsible": { "type": "string" },
+                "Equitable": { "type": "string" },
+                "Traceable": { "type": "string" },
+                "Reliable": { "type": "string" },
+                "Governable": { "type": "string" }
+              }
+            },
+            "Confusers": { "type": "string" },
+            "Robustness": { "type": "string" },
+            "Adversarial Robustness": { "type": "string" },
+            "Explainability": { "type": "string" },
+            "Customer Performance Thresholds": { "type": "string" },
+            "Decision Thresholds": { "type": "string" },
+            "Assumptions": { "type": "string" },
+            "Limitations": { "type": "string" }
+          }
+        }
+      }
+    },
+    "Considerations": {
+      "type": "object",
+      "properties": {
+        "Users": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "Use Cases": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "Limitations": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "Tradeoffs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "Ethical Considerations": {
+          "type": "object",
+          "properties": {
+            "Name": { "type": "string" },
+            "Mitigation Strategy": { "type": "string" }
+          }
+        }
+      }
+    },
+    "Risk": {
+      "type": "object",
+      "properties": {
+        "Type": { "type": "string" },
+        "Mitigation Strategy": { "type": "string" }
+      }
     }
-  },
-  "required": ["Schema Version", "Model Details", "model_parameters", "quantitative_analysis", "considerations"]
+  }
 }

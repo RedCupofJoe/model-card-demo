@@ -2,7 +2,7 @@
   "Schema Version": "V1.0",
   "Model Details": {
     "Name": "Name of the model",
-    "Overiew": "Model Overview",
+    "Overview": "Model Overview",
     "Classification": "Unclassified, CUI, Secret, or Top Secret",
     "Type": "What type of model?",
     "Training Methodology": "Training Methodology used to train the model",
@@ -16,7 +16,7 @@
     "Version": {
       "Name": "v1.0",
       "Date": "The date the version was released.",
-      "Model differneces": "The changes from the previous version"
+      "Model differences": "The changes from the previous version"
     },
     "License": "The model's license for use",
     "References": "Links providing more information about the model",
@@ -41,7 +41,7 @@
     "Model Architecture": "The architeture of the model",
     "Data Card": "Pointer to the datasets(data card) used to train and evaluate the model",
     "Security Card": "Pointer to the security card which describes how the model is secured",
-    "Fomat": "Format of the model",
+    "Format": "Format of the model",
     "Input Format": "The data format for inputs to the model",
     "Output Format": "THe data format for outputs from the model"
   },

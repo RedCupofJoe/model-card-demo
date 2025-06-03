@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Card, Container, Row, Col, Form } from "react-bootstrap";
+import { Button, Card, Container, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
@@ -11,7 +11,6 @@ const Home = () => {
     setModelCards(storedCards.slice(0, 3)); // Show top 3 cards as preview
   }, []);
 
-  const handleUpload = () => navigate("/upload");
   const handleCreate = () => navigate("/create");
 
   return (
@@ -46,14 +45,14 @@ const Home = () => {
       <Row>
         {modelCards.length > 0 ? (
           modelCards.map((card, index) => {
-            const details = card["model_details"] || {};
+            const details = card["Model Details"] || {};
             return (
               <Col md={4} key={index} className="mb-4">
                 <Card>
                   <Card.Body>
-                    <Card.Title>{details.name || "Untitled Model"}</Card.Title>
+                    <Card.Title>{details.Name || "Untitled Model"}</Card.Title>
                     <Card.Text>
-                      {details.overview?.substring(0, 100) || "No description available."}
+                      {details.Overview?.substring(0, 100) || "No description available."}
                     </Card.Text>
                     <Button
                       variant="outline-primary"
