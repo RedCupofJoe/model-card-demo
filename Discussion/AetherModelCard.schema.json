@@ -1,0 +1,180 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Aether Model Card Schema",
+  "type": "object",
+  "required": [
+    "identity_and_basic_information",
+    "source_and_distribution",
+    "ownership_and_governance",
+    "model_architecture",
+    "training_information",
+    "evaluation_and_performance",
+    "deployment_and_operations",
+    "limitations_and_constraints",
+    "security_and_risk_assessment"
+  ],
+  "properties": {
+    "identity_and_basic_information": {
+      "type": "object",
+      "properties": {
+        "model_name": { "type": "string", "description": "Enter the name of the model" },
+        "model_type": { "type": "array", "description": "Specify the model type(s)" },
+        "version": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string", "description": "Enter the version name" },
+            "date": { "type": "string", "format": "date", "description": "Release date of this version" },
+            "model_difference": { "type": "string", "description": "Describe reasons to upgrade or downgrade the version" }
+          }
+        },
+        "overview": {
+          "type": "string",
+          "pattern": "^This model contains \\{[^}]+\\} collected from \\{[^}]+\\} for the purpose of \\{[^}]+\\}\\.$",
+          "description": "Must follow the template: 'This model contains {type of data} collected from {source} for the purpose of {intended use}." },
+        "license": { "type": "string", "description": "Specify the license under which the model is released" },
+        "references": {
+          "description": "Links providing more information about the model.",
+          "type": "array",
+          "items": { "type": "string", "format": "uri" }
+        },
+        "citation": { "type": "string", "description": "How to reference this model card" }
+      }
+    },
+    "source_and_distribution": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "The datasets used to train and evaluate the model.",
+          "type": "object",
+          "properties": {
+            "train": { "$ref": "#/definitions/dataset" },
+            "eval": { "$ref": "#/definitions/dataset" }
+          }
+        },
+        "open_source": { "type": "boolean", "description": "Is this model open source?" },
+        "source_code_url": { "type": "string", "format": "uri", "description": "Link to source code repository" },
+        "model_origin": { "type": "string", "description": "Where or by whom was the model developed?" }
+      }
+    },
+    "ownership_and_governance": {
+      "type": "object",
+      "properties": {
+        "owners": {
+          "description": "The individuals or teams who own the model.",
+          "type": "array",
+          "items": { "$ref": "#/definitions/owner" }
+        }
+      }
+    },
+    "model_architecture": {
+      "type": "object",
+      "properties": {
+        "architecture_type": { "type": "string", "description": "Describe the type of architecture used" },
+        "ontology_and_semantic_mapping": {
+          "type": "object",
+          "properties": {
+            "frameworks": { "type": "string", "description": "What frameworks are used?" },
+            "structured_taxonomies": { "type": "string", "description": "Specify any structured taxonomies" },
+            "ontologies": { "type": "string", "description": "Specify any ontologies used" },
+            "semantic_models": { "type": "string", "description": "Specify any semantic models used" },
+            "external_factors": { "type": "string", "description": "Specify any external factors that influenced classification and their integration within the ontology" }
+          }
+        },
+        "input_format": { "type": "string", "description": "The data format for inputs to the model" },
+        "output_format": { "type": "string", "description": "The data format for outputs from the model" },
+        "format": { "type": "string", "description": "Format of the model itself" },
+        "libraries": { "type": "string", "description": "Libraries used when building the model" }
+      }
+    },
+    "training_information": {
+      "type": "object",
+      "properties": {
+        "training_methodology": { "type": "string", "description": "How was the model trained?" },
+        "training_data_overview": { "type": "string", "description": "Overview of the training data" },
+        "data_card_link": { "type": "string", "format": "uri", "description": "Link to the data card" },
+        "dependencies": { "type": "string", "description": "What are the model dependencies?" }
+      }
+    },
+    "evaluation_and_performance": {
+      "type": "object",
+      "properties": {
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "description": "Which performance measure was used?" },
+            "value": { "type": "number", "description": "Value of the metric" },
+            "description": { "type": "string", "description": "Method, or other relevant information" },
+            "confidence_interval": {
+              "type": "object",
+              "properties": {
+                "lower_bound": { "type": "number", "description": "Lower bound of the confidence interval" },
+                "upper_bound": { "type": "number", "description": "Upper bound of the confidence interval" }
+              }
+            },
+            "decision_thresholds": { "type": "string", "description": "The decision threshold the metric was computed on" },
+            "slice": { "type": "string", "description": "The name of the slice this metric was computed on. If not sliced, leave blank." },
+            "assumptions": { "type": "string", "description": "All assumptions made during testing and evaluation" }
+          }
+        },
+        "evaluation_objective": { "type": "string", "description": "Overall objective of testing and evaluation" },
+        "benchmark_standard": { "type": "string", "description": "What benchmark standard(s) were used?" }
+      }
+    },
+    "deployment_and_operations": {
+      "type": "object",
+      "properties": {
+        "infrastructure_requirements": { "type": "string", "description": "Deployment dependencies" },
+        "hardware_requirements": { "type": "string", "description": "Hardware required for model deployment" },
+        "deployment_constraints": { "type": "string", "description": "Deployment constraints and optimization strategies" }
+      }
+    },
+    "limitations_and_constraints": {
+      "type": "object",
+      "properties": {
+        "known_limitations": {
+          "type": "array",
+          "items": { "type": "string", "description": "Known limitation" }
+        },
+        "performance_tradeoffs": {
+          "type": "array",
+          "items": { "type": "string", "description": "Known performance tradeoff" }
+        },
+        "technical_documentation": { "type": "string", "format": "uri", "description": "Link to technical documentation" }
+      }
+    },
+    "security_and_compliance": {
+      "type": "object",
+      "properties": {
+        "security_card_link": { "type": "string", "format": "uri", "description": "Link to security card" },
+        "risk": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "risk_type": { "type": "string", "description": "Name or type of risk" },
+              "mitigation_strategy": { "type": "string", "description": "Strategy used to address this risk" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "owner": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "The name of the owner." },
+        "contact": { "type": "string", "description": "The contact information of the owner." }
+      }
+    },
+    "dataset": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "The name of the dataset." },
+        "link": { "type": "string", "format": "uri", "description": "A link to the dataset." },
+        "sensitive": { "type": "boolean", "description": "Does this dataset contain human or other sensitive data?", "const": "True" },
+        "dataset_link": { "type": "string", "format": "uri", "description": "Link to the dataset" }
+      }
+    }
+  }
+}
