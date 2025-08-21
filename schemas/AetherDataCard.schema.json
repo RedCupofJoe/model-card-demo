@@ -1,0 +1,232 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Aether Data Card Schema",
+  "type": "object",
+  "required": [
+    "identity_and_basic_information",
+    "source_and_distribution",
+    "ownership_and_governance",
+    "preprocessing_and_transformations",
+    "technical_characteristics",
+    "data_quality",
+    "security_and_risk_assessment"
+  ],
+  "properties": {
+    "identity_and_basic_information": {
+      "type": "object",
+      "properties": {
+        "dataset_name": { "title": "Dataset Name", "type": "string", "description": "What is the name of the dataset?"},
+        "data_types": {
+            "type": "array",
+            "items": { "type": "string", "description": "Types of data included in the dataset, e.g., imagery, video, network logs, documents, and so on"}
+        },        
+        "version": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string", "description": "What is the name/number of the version? Encourage use of semantic versioning where possible." },
+            "date": { "type": "string", "format": "date", "description": "Date the data collection ended, in ISO 8601 format (YYYY-MM-DD)"},
+            "release_notes": {"type": "string", "default": "Reasons to upgrade or downgrade the version?"},
+            "data_of_delivery": {"type": "string", "pattern": "\\{[^}]+\\}\\{[^}]+\\},\\{[^}]+\\}", "description": "Must follow the template: '{month} {day}, {year}."},
+          }
+        },
+        "DoD": {
+            "data_submission_info": {
+              "org_name": { "type": "string", "description": "Organization name that provided the dataset" },
+              "points_of_contact": {
+                "type": "object",
+                "properties": {
+                  "poc_type": { "type": "enum", "items": ["data_owner", "technical_poc", "collection_poc"], "description": "Enter the version name" },
+                  "name": { "type": "string", "format": "date", "description": "Point of Contact first and last name" },
+                  "email": { "type": "string", "format": "email", "description": "Point of Contact email address" },
+                  "phone": { "type": "string", "description": "Point of Contact phone number" }
+                }
+              }
+            },
+            "is_synthetic": { "type": "boolean", "description": "Is this dataset synthetic data?"},
+            "collection_dates": { 
+                "start_date": {"type": "string", "format": "date", "description": "Date the data collection began, in ISO 8601 format (YYYY-MM-DD)"},
+                "end_date": {"type": "string", "format": "date", "description": "Date the data collection ended, in ISO 8601 format (YYYY-MM-DD)"},
+                "dates_approximate": {"type": "boolean", "description": "Are the start and end dates above exact or approximate only?"}
+            },
+            "collection_locations": {
+                "type": "array", 
+                "items": { "type": "string", "description": "Location where dataset was collected"}
+            },
+            "collection_method": { "type": "string", "description": "Tools (sensors) and/or process used to collect the data" },
+            "dataset_size": {"type" : "integer", "description": "Size value of dataset" },
+            "dataset_size_units": {"type": "string", "enum": ["KB", "MB", "GB", "TB"], "description": "Size of the units for dataset" },
+            "data_delivery_method": { "type": "string", "enum": ["electronic", "hard drive"], "description": "how the dataset is transferred to the storage provider (for later tracking)"},
+            "data_description": { "type": "string", "description": "Detailed description of the dataset, e.g., number of images, the elements found in a video, how the data was labeled, time of day, weather conditions, sensor orientation, and anything else that is involved with reproducing a similar type of collection in the future."},
+            "collection_modality": { "type": "array", "items": {"type": "string", "description": "what data modality is being used when the collection happens, e.g., individual frames, RGB color data" } },
+            "terrain_type": { "type": "array", "items": {"type": "string", "description": "types of terrain in the dataset, e.g., rural, urban, commercial, airfield, etc." } },
+            "sensor_views": { "type": "array", "items": {"type": "string", "description": "where the sensor is located and where the targets are located, e.g., 'ground to ground', 'ground to aerial', etc."}},
+            "sensor_view_na": { "type": "boolean", "description": "whether the sensor view is not available"},
+            "data_bit_depth": { "type": "string", "description": "bit depth for images or video, e.g, 8-bit, 16-bit, 24-bit"},
+            "data_frame_rate": { "type": "string", "description": "the frame rate for video when applicable, e.g., 30fps, 60fps (frames per second)"},
+            "data_context": { "type": "string", "description": ""},
+            "data_structure": { "type": "string" },
+            "data_source": { "type": "string" },
+            "data_labeling_info": {
+                "data_is_labeled": { "type": "boolean", "description": "whether the data is labeled" },
+                "label_ontology": { "type": "string", "description": "DoD or other ontology used for labeling, if any"},
+                "data_labeling_request": { "type": "boolean", "description": "whether the provider needs the data to be labeled after ingest" },
+                "key_objects": { "type": "array", "items": {"type": "string", "description": "Objects of interest in the scene"} },
+                "filename_standard": { "type": "boolean", "description": "Whether a filename standard is being followed"},
+                "filename_convention":{ "type": "string", "description": "If filename_standard is true above, then its conventio/description is detailed here." }
+            },
+            "security_quality_info"; {
+              "data_provenance": { "type": "string", "description": "images and labels for the designated organization by a vendor using a model. Simulated environment generated from public GIS data using the model's GIS toolbox. Individual assets and textures either developed by the vendor or sourced from a model marketplace." },
+              "data_quality_assurance": { },
+              "antivirus_scan": {
+                "scan_performed": { "type": "boolean", "description": "whether an antivirus scan was performed on the data before it was provided"},
+                "scan_software": { "type": "string", "description": "antivirus software was used to perform the scan"}
+              }
+            },
+            "certification_info" {
+              "submitter_name": { "type": "string", "description": "Person who certifies that the dataset information is true and complete to the best of their knowledge" },
+              "submitter_email": { "type": "string", "description": "Email of the above submitter" },
+              "submission_date": { "type": "string", "format": "date", "description": "Date the above certification was submitted" }
+            }
+        },        
+        "overview": { 
+          "type": "string", 
+          "pattern": "^This model contains \\{[^}]+\\} collected from \\{[^}]+\\} for the purpose of \\{[^}]+\\}\\.$",
+          "description": "Must follow the template: 'This model contains {type of data} collected from {source} for the purpose of {intended use}.'",
+        },
+        "license": { "type": "string", "default": "What is the model license for use?" },
+        "references": {
+          "description": "Links providing more information about the model.",
+          "type": "array",
+          "items": {
+              "type": "string",
+              "format": "uri"}
+              },
+        "citation": { "type": "string", "default": "How to reference this model card"}
+      }
+    }
+    "source_and_distribution": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "description": "The datasets used to train and evaluate the model.",
+          "type": "object",
+          "properties": {
+            "train": { "$ref": "#/definitions/dataset" },
+            "eval": { "$ref": "#/definitions/dataset" }
+          }
+        },
+        "open_source": { "type": "boolean", "description": "Is this model open source","default": "Is this model open source?" },
+        "source_code_url": { "type": "string", "format": "uri" },
+        "model_origin": {"type": "string", "default": "What is the model origin?"}
+    },
+    "ownership_and_governance": {
+      "type": "object",
+      "properties": {
+        "owners": {
+          "description": "The individuals or teams who own the model.",
+          "type": "array",
+          "items": {"$ref": "#/definitions/owner"}
+        }
+      }
+    },
+    "preprocessing_and_transformations": {
+      "type": "object",
+      "properties": {
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "default": "Which performance measure?" },
+            "value": { "type": "number", "default": "Value of the metric?" },
+            "description": {"type": "string", "default": "Method, or other relative information"},
+            "confidence_interval": {
+              "type": "object",
+              "properties": {
+                "lower_bound": { "type": "number", "default": "What is the Lower bound?" },
+                "upper_bound": { "type": "number", "default": "What is the upper bound?" }
+              }
+            },
+            "decision_thresholds": { "type": "string", "default": "The decision threshold the metric was computed on" },
+            "slice": { "type": "string", "default": "The name of the slice this metric was computed on. By default, assume this metric is not sliced." },
+            "assumptions": {"type": "string", "default": "All assumptions made during testing and evaluation"}
+          }
+        },
+        "evaluation_objective": { "type": "string", "default": "Overall objective of T&E?" },
+        "benchmark_standard": { "type": "string", "default": "What Benchmark standard(s) used" }
+      }
+    },
+    "technical_characteristics": {
+      "type": "object",
+      "properties": {
+        "infrastructure_requirements": { "type": "string", "default": "What are the deployment dependencies" },
+        "hardware_requirements": { "type": "string", "description": "These are the hardware_requirements."},
+        "deployment_constraints": { "type": "string", "default": "Wht are the deployment constraints/how is the model optimized?" }
+      }
+    },
+    "data_quality": {
+      "type": "object",
+      "properties": {
+        "known_limitations": {
+          "type": "array",
+          "items": { "type": "string", "default": "Known limitations" }
+        },
+        "performance_tradeoffs": {
+          "type": "array",
+          "items": { "type": "string", "default": "Known performance tradeoffs" }
+        },
+        "technical_documentation": { "type": "string", "format": "uri", "description": "Link to the technical_documentation"}
+      }
+    },
+    "security_and_risk_assessment": {
+      "type": "object",
+      "properties": {
+        "security_card_link": { "type": "string", "format": "uri" },
+        "risk": {
+          "type": "array", 
+          "risk_type": { "type": "array", "default": "What is the name/type of risk?" },
+          "mitigation_strategy": { "type": "string", "default": "Strategy used to address this risk?" }
+      }
+    },
+    "definitions": {
+    "owner": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The name of the owner.",
+          "type": "string"
+        },
+        "contact": {
+          "description": "The contact information of the owner.",
+          "type": "string"
+        }
+      }
+    },
+    "dataset": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The name of the dataset.",
+          "type": "string"
+        },
+        "link": {
+          "description": "A link to the dataset.",
+          "type": "string",
+          "format": "uri"
+        },
+        "sensitive": {
+          "description": "Does this dataset contain human or other sensitive data?",
+          "type": "boolean",
+          "const": "True"
+        },
+        "dataset_link": { 
+          "description": "Link to the dataset",
+          "type": "string", 
+          "format": "uri" 
+        }
+      }
+    }
+  }
+}
+    
+    }
+  }
+}
