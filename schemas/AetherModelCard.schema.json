@@ -239,6 +239,20 @@
                         }
                     }
                 },
+                "evaluation_infrastructure": {
+                    "hardware_requirements": {
+                        "type": "string",
+                        "description": "Specify minimum and recommended resources needed to run the model in a production environment, including compute power, e.g., system CPU/GPU/TPU requirements, memory and storage capacity."                 
+                    },
+                    "evaluation_constraints": {
+                        "type": "string",
+                        "description": "Indicate whether the model is optimized for on-prem, cloud, edge devices, or hybrid environments."                 
+                    },
+                    "other_evaluation_requirements": {
+                        "type": "string",
+                        "description": "Other special requirements such as sensors, FPGA/ASIC accelerators, real-time processing constraints, or secure enclave compatibility."                 
+                    }
+                },
                 "evaluation_objective": {
                     "type": "string",
                     "description": "Overall objective of testing and evaluation"
