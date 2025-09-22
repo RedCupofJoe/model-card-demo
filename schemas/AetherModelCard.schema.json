@@ -253,13 +253,91 @@
                         "description": "Other special requirements such as sensors, FPGA/ASIC accelerators, real-time processing constraints, or secure enclave compatibility."                 
                     }
                 },
+                "evaluation_data": {
+                    "type": "array",
+                    "description": "List of datasets or data sources used during evaluation. Each entry should include metadata such as dataset name, origin, size, domain, and licensing details to enable reproducibility and transparency.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Name of the dataset (e.g., ImageNet, SQuAD, custom financial transactions dataset)."
+                            },
+                            "version": {
+                                "type": "string",
+                                "description": "Version, release, or snapshot date of the dataset."
+                            },
+                            "source": {
+                                "type": "string",
+                                "description": "URL, DOI, or citation reference for the dataset."
+                            }
+                        },
+                        "required": ["name"]
+                    }
+                },
+                "evaluation_team": {
+                    "type": "array",
+                    "description": "List of individuals, groups, or organizations responsible for conducting the evaluation. Helps clarify who performed the evaluation, their expertise, and whether the evaluation was internal, external, or a hybrid effort.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Name of the evaluator (person, team, or organization)."
+                            },
+                            "role": {
+                                "type": "string",
+                                "description": "Role in the evaluation process (e.g., lead evaluator, annotator, auditor)."
+                            },
+                            "affiliation": {
+                                "type": "string",
+                                "description": "Institution, company, or independent group affiliation."
+                            },
+                            "expertise": {
+                                "type": "string",
+                                "description": "Relevant expertise or credentials (e.g., NLP researcher, medical doctor, certified auditor)."
+                            },
+                            "evaluation_type": {
+                                "type": "string",
+                                "description": "Internal, external, or hybrid evaluation effort."
+                            },
+                            "contact": {
+                                "type": "string",
+                                "description": "Optional contact info (e.g., email or website) for accountability or follow-up."
+                            }
+                        },
+                        "required": ["name", "role"]
+                    }
+                },
                 "evaluation_objective": {
                     "type": "string",
-                    "description": "Overall objective of testing and evaluation"
+                    "description": "State the primary goals and intended outcomes of the evaluation process. This may include validating baseline accuracy, benchmarking against alternative models, stress-testing for robustness, ensuring compliance with regulatory standards, or assessing performance trade-offs such as latency vs. accuracy. Clearly define what success looks like in the context of model evaluation."
+                },
+                "evaluation_system": {
+                    "type": "string",
+                    "description": "Identify the system(s), platform(s), or testbed environment(s) used to conduct model evaluation. This may include operating systems, container runtimes, orchestration frameworks, benchmarking suites, or standardized evaluation platforms. Provide enough detail so results can be reproduced or compared across different setups."
                 },
                 "benchmark_standard": {
-                    "type": "string",
-                    "description": "What benchmark standard(s) were used?"
+                    "type": "array",
+                    "description": "List of benchmark datasets, suites, or standardized tasks used to evaluate the model. Include names, versions, and optionally sources to ensure transparency and reproducibility.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Name of the benchmark dataset, suite, or task (e.g., GLUE, ImageNet, MLPerf)."
+                            },
+                            "version": {
+                                "type": "string",
+                                "description": "Version or release identifier of the benchmark, if applicable."
+                            },
+                            "source": {
+                                "type": "string",
+                                "description": "URL, DOI, or citation reference for the benchmark resource."
+                            }
+                        },
+                        "required": ["name"]
+                    }
                 }
             }
         },
