@@ -203,6 +203,40 @@
                                 "type": "string",
                                 "description": "e.g., point-based, bounding box, track-based outputs"
                             }
+                        },
+                        "inference_format": {
+                            "type": "array",
+                            "description": "List of supported input formats for inference, including data type, serialization method, and transport protocol. Use this section to clearly document how inputs must be structured for deployment systems to interact with the model.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Name of the format or standard (e.g., ONNX, TorchScript, TensorFlow SavedModel, JSON)."
+                                    },
+                                    "version": {
+                                        "type": "string",
+                                        "description": "Version or release identifier of the format, if applicable."
+                                    },
+                                    "data_type": {
+                                        "type": "string",
+                                        "description": "Expected input data type(s), such as float32 tensors, int8 quantized tensors, images, audio waveforms, or structured text."
+                                    },
+                                    "serialization": {
+                                        "type": "string",
+                                        "description": "Serialization method or encoding (e.g., Protobuf, JSON, MessagePack, NumPy arrays)."
+                                    },
+                                    "protocol": {
+                                        "type": "string",
+                                        "description": "Transport or API protocol for inference requests (e.g., REST, gRPC, Kafka streaming, file-based batch)."
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "description": "Additional details or constraints, such as batching requirements, input shape conventions, or compression methods."
+                                    }
+                                },
+                                "required": ["name", "data_type"]
+                            }
                         }
                     }
                 }
