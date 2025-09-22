@@ -189,6 +189,20 @@
                         "deployment_constraints": {
                             "type": "string",
                             "description": "Indicate whether the model is optimized for on-premises, cloud, edge devices, or hybrid environments. Also, any special requirements such as FPGA/ASIC accelerators, real-time processing constraints, or secure enclave compatibility."
+                        },
+                        "model_output": {
+                            "output_format": {
+                                "type": "string",
+                                "description": "Specify output structure, e.g., classification labels, segmentation masks, object detections"                            
+                            },
+                            "coordinate_base_used": {
+                                "type": "string",
+                                "description": "e.g., pixel space, geographic coordinates, relative positions"
+                            },
+                            "geolocation_rules": {
+                                "type": "string",
+                                "description": "e.g., point-based, bounding box, track-based outputs"
+                            }
                         }
                     }
                 }
