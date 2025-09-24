@@ -1,0 +1,973 @@
+import React, { useState } from 'react';
+import { Container, Row, Col, Form, Button, Card, Alert } from 'react-bootstrap';
+
+const ModelCardForm = () => {
+  const [formData, setFormData] = useState({
+    identity_and_basic_information: {
+      model_name: '',
+      model_type: '',
+      version: {
+        name: '',
+        date: '',
+        model_difference: '',
+        date_of_model_delivery: ''
+      },
+      overview: '',
+      license: '',
+      references: [''],
+      citation: ''
+    },
+    source_and_distribution: {
+      data: {
+        train: {
+          name: '',
+          link: '',
+          sensitive: false,
+          dataset_link: ''
+        },
+        eval: {
+          name: '',
+          link: '',
+          sensitive: false,
+          dataset_link: ''
+        }
+      },
+      source_code_url: '',
+      model_origin: ''
+    },
+    ownership_and_governance: {
+      owners: [{
+        name: '',
+        contact: ''
+      }]
+    },
+    technical_specifications: {
+      model_parameters: {
+        model_architecture: '',
+        ontology_and_semantic_mapping: {
+          ontologies: [''],
+          semantic_models: '',
+          external_factors: ''
+        },
+        input_format: '',
+        output_format: '',
+        format: '',
+        libraries: ['']
+      },
+      training_parameters: {
+        training_methodology: '',
+        data_card_link: '',
+        dependencies: ''
+      },
+      inference_requirements: {
+        software: '',
+        hardware: '',
+        deployment_constraints: '',
+        model_output: {
+          output_format: '',
+          coordinate_base_used: '',
+          geolocation_rules: ''
+        },
+        inference_format: [{
+          name: '',
+          version: '',
+          data_type: '',
+          serialization: '',
+          protocol: '',
+          notes: ''
+        }]
+      }
+    },
+    evaluation_and_performance: {
+      metrics: {
+        type: '',
+        value: '',
+        description: '',
+        confidence_interval: {
+          lower_bound: '',
+          upper_bound: ''
+        },
+        decision_thresholds: '',
+        slice: '',
+        assumptions: ''
+      },
+      evaluation_infrastructure: {
+        hardware_requirements: '',
+        evaluation_constraints: '',
+        other_evaluation_requirements: ''
+      },
+      evaluation_data: [{
+        name: '',
+        version: '',
+        source: ''
+      }],
+      evaluation_team: [{
+        name: '',
+        role: '',
+        affiliation: '',
+        expertise: '',
+        evaluation_type: '',
+        contact: ''
+      }],
+      evaluation_objective: '',
+      evaluation_system: '',
+      benchmark_standard: [{
+        name: '',
+        version: '',
+        source: ''
+      }]
+    },
+    limitations_and_constraints: {
+      limitations: [''],
+      tradeoffs: ['']
+    },
+    security_and_compliance: {
+      security_card_link: '',
+      risk: [{
+        risk_type: '',
+        mitigation_strategy: ''
+      }]
+    }
+  });
+
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleInputChange = (path, value) => {
+    setFormData(prev => {
+      const newData = { ...prev };
+      const keys = path.split('.');
+      let current = newData;
+      
+      for (let i = 0; i < keys.length - 1; i++) {
+        if (!current[keys[i]]) {
+          current[keys[i]] = {};
+        }
+        current = current[keys[i]];
+      }
+      
+      current[keys[keys.length - 1]] = value;
+      return newData;
+    });
+  };
+
+  const handleArrayChange = (path, index, value) => {
+    setFormData(prev => {
+      const newData = { ...prev };
+      const keys = path.split('.');
+      let current = newData;
+      
+      for (let i = 0; i < keys.length - 1; i++) {
+        current = current[keys[i]];
+      }
+      
+      if (!Array.isArray(current[keys[keys.length - 1]])) {
+        current[keys[keys.length - 1]] = [];
+      }
+      
+      current[keys[keys.length - 1]][index] = value;
+      return newData;
+    });
+  };
+
+  const addArrayItem = (path, defaultValue = '') => {
+    setFormData(prev => {
+      const newData = { ...prev };
+      const keys = path.split('.');
+      let current = newData;
+      
+      for (let i = 0; i < keys.length - 1; i++) {
+        current = current[keys[i]];
+      }
+      
+      if (!Array.isArray(current[keys[keys.length - 1]])) {
+        current[keys[keys.length - 1]] = [];
+      }
+      
+      current[keys[keys.length - 1]].push(defaultValue);
+      return newData;
+    });
+  };
+
+  const removeArrayItem = (path, index) => {
+    setFormData(prev => {
+      const newData = { ...prev };
+      const keys = path.split('.');
+      let current = newData;
+      
+      for (let i = 0; i < keys.length - 1; i++) {
+        current = current[keys[i]];
+      }
+      
+      current[keys[keys.length - 1]].splice(index, 1);
+      return newData;
+    });
+  };
+
+  const downloadJSON = () => {
+    const dataStr = JSON.stringify(formData, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `${formData.identity_and_basic_information.model_name || 'model_card'}_${new Date().toISOString().split('T')[0]}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 3000);
+  };
+
+  const modelTypes = ["Computer Vision", "RF", "EO/IR", "NLP", "Other"];
+
+  return (
+    <Container fluid className="py-4">
+      <Row className="justify-content-center">
+        <Col lg={10}>
+          <Card>
+            <Card.Header className="bg-primary text-white">
+              <h2 className="mb-0">Aether Model Card Creator</h2>
+              <p className="mb-0">Fill out the form below to create a comprehensive model card</p>
+            </Card.Header>
+            <Card.Body>
+              {showSuccess && (
+                <Alert variant="success" className="mb-4">
+                  Model card downloaded successfully!
+                </Alert>
+              )}
+
+              <Form>
+                {/* Identity and Basic Information */}
+                <Card className="mb-4">
+                  <Card.Header>
+                    <h4>Identity and Basic Information</h4>
+                  </Card.Header>
+                  <Card.Body>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Model Name *</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.identity_and_basic_information.model_name}
+                            onChange={(e) => handleInputChange('identity_and_basic_information.model_name', e.target.value)}
+                            placeholder="Enter model name"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Model Type *</Form.Label>
+                          <Form.Select
+                            value={formData.identity_and_basic_information.model_type}
+                            onChange={(e) => handleInputChange('identity_and_basic_information.model_type', e.target.value)}
+                          >
+                            <option value="">Select model type</option>
+                            {modelTypes.map(type => (
+                              <option key={type} value={type}>{type}</option>
+                            ))}
+                          </Form.Select>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <h5>Version Information</h5>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Version Name</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.identity_and_basic_information.version.name}
+                            onChange={(e) => handleInputChange('identity_and_basic_information.version.name', e.target.value)}
+                            placeholder="e.g., v1.0.0"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Date of Model Delivery</Form.Label>
+                          <Form.Control
+                            type="date"
+                            value={formData.identity_and_basic_information.version.date_of_model_delivery}
+                            onChange={(e) => handleInputChange('identity_and_basic_information.version.date_of_model_delivery', e.target.value)}
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Model Difference</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={formData.identity_and_basic_information.version.model_difference}
+                        onChange={(e) => handleInputChange('identity_and_basic_information.version.model_difference', e.target.value)}
+                        placeholder="Describe changes from previous version"
+                      />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Overview</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={4}
+                        value={formData.identity_and_basic_information.overview}
+                        onChange={(e) => handleInputChange('identity_and_basic_information.overview', e.target.value)}
+                        placeholder="What makes this model unique or distinguished from other models"
+                      />
+                    </Form.Group>
+
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>License</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.identity_and_basic_information.license}
+                            onChange={(e) => handleInputChange('identity_and_basic_information.license', e.target.value)}
+                            placeholder="e.g., MIT, Apache 2.0"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Citation</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.identity_and_basic_information.citation}
+                            onChange={(e) => handleInputChange('identity_and_basic_information.citation', e.target.value)}
+                            placeholder="How to reference this model card"
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>References</Form.Label>
+                      {formData.identity_and_basic_information.references.map((ref, index) => (
+                        <div key={index} className="d-flex mb-2">
+                          <Form.Control
+                            type="url"
+                            value={ref}
+                            onChange={(e) => handleArrayChange('identity_and_basic_information.references', index, e.target.value)}
+                            placeholder="https://example.com"
+                            className="me-2"
+                          />
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => removeArrayItem('identity_and_basic_information.references', index)}
+                            disabled={formData.identity_and_basic_information.references.length === 1}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        onClick={() => addArrayItem('identity_and_basic_information.references', '')}
+                      >
+                        Add Reference
+                      </Button>
+                    </Form.Group>
+                  </Card.Body>
+                </Card>
+
+                {/* Source and Distribution */}
+                <Card className="mb-4">
+                  <Card.Header>
+                    <h4>Source and Distribution</h4>
+                  </Card.Header>
+                  <Card.Body>
+                    <h5>Training Data</h5>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Dataset Name</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.source_and_distribution.data.train.name}
+                            onChange={(e) => handleInputChange('source_and_distribution.data.train.name', e.target.value)}
+                            placeholder="Training dataset name"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Dataset Link</Form.Label>
+                          <Form.Control
+                            type="url"
+                            value={formData.source_and_distribution.data.train.dataset_link}
+                            onChange={(e) => handleInputChange('source_and_distribution.data.train.dataset_link', e.target.value)}
+                            placeholder="https://example.com/dataset"
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Form.Group className="mb-3">
+                      <Form.Check
+                        type="checkbox"
+                        label="Contains sensitive data"
+                        checked={formData.source_and_distribution.data.train.sensitive}
+                        onChange={(e) => handleInputChange('source_and_distribution.data.train.sensitive', e.target.checked)}
+                      />
+                    </Form.Group>
+
+                    <h5>Evaluation Data</h5>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Dataset Name</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.source_and_distribution.data.eval.name}
+                            onChange={(e) => handleInputChange('source_and_distribution.data.eval.name', e.target.value)}
+                            placeholder="Evaluation dataset name"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Dataset Link</Form.Label>
+                          <Form.Control
+                            type="url"
+                            value={formData.source_and_distribution.data.eval.dataset_link}
+                            onChange={(e) => handleInputChange('source_and_distribution.data.eval.dataset_link', e.target.value)}
+                            placeholder="https://example.com/dataset"
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Form.Group className="mb-3">
+                      <Form.Check
+                        type="checkbox"
+                        label="Contains sensitive data"
+                        checked={formData.source_and_distribution.data.eval.sensitive}
+                        onChange={(e) => handleInputChange('source_and_distribution.data.eval.sensitive', e.target.checked)}
+                      />
+                    </Form.Group>
+
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Source Code URL</Form.Label>
+                          <Form.Control
+                            type="url"
+                            value={formData.source_and_distribution.source_code_url}
+                            onChange={(e) => handleInputChange('source_and_distribution.source_code_url', e.target.value)}
+                            placeholder="https://github.com/example/repo"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Model Origin</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.source_and_distribution.model_origin}
+                            onChange={(e) => handleInputChange('source_and_distribution.model_origin', e.target.value)}
+                            placeholder="Where or by whom was the model developed"
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+
+                {/* Ownership and Governance */}
+                <Card className="mb-4">
+                  <Card.Header>
+                    <h4>Ownership and Governance</h4>
+                  </Card.Header>
+                  <Card.Body>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Owners</Form.Label>
+                      {formData.ownership_and_governance.owners.map((owner, index) => (
+                        <div key={index} className="border p-3 mb-3 rounded">
+                          <Row>
+                            <Col md={6}>
+                              <Form.Group className="mb-3">
+                                <Form.Label>Name</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  value={owner.name}
+                                  onChange={(e) => {
+                                    const newOwners = [...formData.ownership_and_governance.owners];
+                                    newOwners[index].name = e.target.value;
+                                    handleInputChange('ownership_and_governance.owners', newOwners);
+                                  }}
+                                  placeholder="Owner name"
+                                />
+                              </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                              <Form.Group className="mb-3">
+                                <Form.Label>Contact</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  value={owner.contact}
+                                  onChange={(e) => {
+                                    const newOwners = [...formData.ownership_and_governance.owners];
+                                    newOwners[index].contact = e.target.value;
+                                    handleInputChange('ownership_and_governance.owners', newOwners);
+                                  }}
+                                  placeholder="Contact information"
+                                />
+                              </Form.Group>
+                            </Col>
+                          </Row>
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => removeArrayItem('ownership_and_governance.owners', index)}
+                            disabled={formData.ownership_and_governance.owners.length === 1}
+                          >
+                            Remove Owner
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        onClick={() => addArrayItem('ownership_and_governance.owners', { name: '', contact: '' })}
+                      >
+                        Add Owner
+                      </Button>
+                    </Form.Group>
+                  </Card.Body>
+                </Card>
+
+                {/* Technical Specifications */}
+                <Card className="mb-4">
+                  <Card.Header>
+                    <h4>Technical Specifications</h4>
+                  </Card.Header>
+                  <Card.Body>
+                    <h5>Model Parameters</h5>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Model Architecture</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={formData.technical_specifications.model_parameters.model_architecture}
+                        onChange={(e) => handleInputChange('technical_specifications.model_parameters.model_architecture', e.target.value)}
+                        placeholder="e.g., Transformer, CNN, RNN"
+                      />
+                    </Form.Group>
+
+                    <Row>
+                      <Col md={4}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Input Format</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.technical_specifications.model_parameters.input_format}
+                            onChange={(e) => handleInputChange('technical_specifications.model_parameters.input_format', e.target.value)}
+                            placeholder="e.g., JSON, CSV, Image"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={4}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Output Format</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.technical_specifications.model_parameters.output_format}
+                            onChange={(e) => handleInputChange('technical_specifications.model_parameters.output_format', e.target.value)}
+                            placeholder="e.g., JSON, Probabilities"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={4}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Model Format</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.technical_specifications.model_parameters.format}
+                            onChange={(e) => handleInputChange('technical_specifications.model_parameters.format', e.target.value)}
+                            placeholder="e.g., ONNX, PyTorch, TensorFlow"
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Libraries</Form.Label>
+                      {formData.technical_specifications.model_parameters.libraries.map((lib, index) => (
+                        <div key={index} className="d-flex mb-2">
+                          <Form.Control
+                            type="text"
+                            value={lib}
+                            onChange={(e) => handleArrayChange('technical_specifications.model_parameters.libraries', index, e.target.value)}
+                            placeholder="Library name and version"
+                            className="me-2"
+                          />
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => removeArrayItem('technical_specifications.model_parameters.libraries', index)}
+                            disabled={formData.technical_specifications.model_parameters.libraries.length === 1}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        onClick={() => addArrayItem('technical_specifications.model_parameters.libraries', '')}
+                      >
+                        Add Library
+                      </Button>
+                    </Form.Group>
+
+                    <h5>Training Parameters</h5>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Training Methodology</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={formData.technical_specifications.training_parameters.training_methodology}
+                        onChange={(e) => handleInputChange('technical_specifications.training_parameters.training_methodology', e.target.value)}
+                        placeholder="Describe how the model was trained"
+                      />
+                    </Form.Group>
+
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Data Card Link</Form.Label>
+                          <Form.Control
+                            type="url"
+                            value={formData.technical_specifications.training_parameters.data_card_link}
+                            onChange={(e) => handleInputChange('technical_specifications.training_parameters.data_card_link', e.target.value)}
+                            placeholder="https://example.com/data-card"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Dependencies</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.technical_specifications.training_parameters.dependencies}
+                            onChange={(e) => handleInputChange('technical_specifications.training_parameters.dependencies', e.target.value)}
+                            placeholder="Lock file or dependency information"
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <h5>Inference Requirements</h5>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Software Requirements</Form.Label>
+                          <Form.Control
+                            as="textarea"
+                            rows={2}
+                            value={formData.technical_specifications.inference_requirements.software}
+                            onChange={(e) => handleInputChange('technical_specifications.inference_requirements.software', e.target.value)}
+                            placeholder="Deployment library dependencies"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Hardware Requirements</Form.Label>
+                          <Form.Control
+                            as="textarea"
+                            rows={2}
+                            value={formData.technical_specifications.inference_requirements.hardware}
+                            onChange={(e) => handleInputChange('technical_specifications.inference_requirements.hardware', e.target.value)}
+                            placeholder="Hardware required for deployment"
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Deployment Constraints</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={formData.technical_specifications.inference_requirements.deployment_constraints}
+                        onChange={(e) => handleInputChange('technical_specifications.inference_requirements.deployment_constraints', e.target.value)}
+                        placeholder="On-premises, cloud, edge devices, or hybrid environments"
+                      />
+                    </Form.Group>
+                  </Card.Body>
+                </Card>
+
+                {/* Evaluation and Performance */}
+                <Card className="mb-4">
+                  <Card.Header>
+                    <h4>Evaluation and Performance</h4>
+                  </Card.Header>
+                  <Card.Body>
+                    <h5>Metrics</h5>
+                    <Row>
+                      <Col md={4}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Metric Type</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.evaluation_and_performance.metrics.type}
+                            onChange={(e) => handleInputChange('evaluation_and_performance.metrics.type', e.target.value)}
+                            placeholder="e.g., Accuracy, F1-Score"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={4}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Metric Value</Form.Label>
+                          <Form.Control
+                            type="number"
+                            step="0.001"
+                            value={formData.evaluation_and_performance.metrics.value}
+                            onChange={(e) => handleInputChange('evaluation_and_performance.metrics.value', parseFloat(e.target.value) || '')}
+                            placeholder="0.95"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={4}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Decision Thresholds</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.evaluation_and_performance.metrics.decision_thresholds}
+                            onChange={(e) => handleInputChange('evaluation_and_performance.metrics.decision_thresholds', e.target.value)}
+                            placeholder="0.5"
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Metric Description</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={2}
+                        value={formData.evaluation_and_performance.metrics.description}
+                        onChange={(e) => handleInputChange('evaluation_and_performance.metrics.description', e.target.value)}
+                        placeholder="Method or other relevant information"
+                      />
+                    </Form.Group>
+
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Confidence Interval - Lower Bound</Form.Label>
+                          <Form.Control
+                            type="number"
+                            step="0.001"
+                            value={formData.evaluation_and_performance.metrics.confidence_interval.lower_bound}
+                            onChange={(e) => handleInputChange('evaluation_and_performance.metrics.confidence_interval.lower_bound', parseFloat(e.target.value) || '')}
+                            placeholder="0.90"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Confidence Interval - Upper Bound</Form.Label>
+                          <Form.Control
+                            type="number"
+                            step="0.001"
+                            value={formData.evaluation_and_performance.metrics.confidence_interval.upper_bound}
+                            onChange={(e) => handleInputChange('evaluation_and_performance.metrics.confidence_interval.upper_bound', parseFloat(e.target.value) || '')}
+                            placeholder="0.98"
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Evaluation Objective</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={formData.evaluation_and_performance.evaluation_objective}
+                        onChange={(e) => handleInputChange('evaluation_and_performance.evaluation_objective', e.target.value)}
+                        placeholder="State the primary goals and intended outcomes of the evaluation process"
+                      />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Evaluation System</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={2}
+                        value={formData.evaluation_and_performance.evaluation_system}
+                        onChange={(e) => handleInputChange('evaluation_and_performance.evaluation_system', e.target.value)}
+                        placeholder="System(s), platform(s), or testbed environment(s) used"
+                      />
+                    </Form.Group>
+                  </Card.Body>
+                </Card>
+
+                {/* Limitations and Constraints */}
+                <Card className="mb-4">
+                  <Card.Header>
+                    <h4>Limitations and Constraints</h4>
+                  </Card.Header>
+                  <Card.Body>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Limitations</Form.Label>
+                      {formData.limitations_and_constraints.limitations.map((limitation, index) => (
+                        <div key={index} className="d-flex mb-2">
+                          <Form.Control
+                            as="textarea"
+                            rows={2}
+                            value={limitation}
+                            onChange={(e) => handleArrayChange('limitations_and_constraints.limitations', index, e.target.value)}
+                            placeholder="Describe a limitation"
+                            className="me-2"
+                          />
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => removeArrayItem('limitations_and_constraints.limitations', index)}
+                            disabled={formData.limitations_and_constraints.limitations.length === 1}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        onClick={() => addArrayItem('limitations_and_constraints.limitations', '')}
+                      >
+                        Add Limitation
+                      </Button>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Tradeoffs</Form.Label>
+                      {formData.limitations_and_constraints.tradeoffs.map((tradeoff, index) => (
+                        <div key={index} className="d-flex mb-2">
+                          <Form.Control
+                            as="textarea"
+                            rows={2}
+                            value={tradeoff}
+                            onChange={(e) => handleArrayChange('limitations_and_constraints.tradeoffs', index, e.target.value)}
+                            placeholder="Describe a tradeoff"
+                            className="me-2"
+                          />
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => removeArrayItem('limitations_and_constraints.tradeoffs', index)}
+                            disabled={formData.limitations_and_constraints.tradeoffs.length === 1}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        onClick={() => addArrayItem('limitations_and_constraints.tradeoffs', '')}
+                      >
+                        Add Tradeoff
+                      </Button>
+                    </Form.Group>
+                  </Card.Body>
+                </Card>
+
+                {/* Security and Compliance */}
+                <Card className="mb-4">
+                  <Card.Header>
+                    <h4>Security and Compliance</h4>
+                  </Card.Header>
+                  <Card.Body>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Security Card Link</Form.Label>
+                      <Form.Control
+                        type="url"
+                        value={formData.security_and_compliance.security_card_link}
+                        onChange={(e) => handleInputChange('security_and_compliance.security_card_link', e.target.value)}
+                        placeholder="https://example.com/security-card"
+                      />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Risk Assessment</Form.Label>
+                      {formData.security_and_compliance.risk.map((risk, index) => (
+                        <div key={index} className="border p-3 mb-3 rounded">
+                          <Row>
+                            <Col md={6}>
+                              <Form.Group className="mb-3">
+                                <Form.Label>Risk Type</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  value={risk.risk_type}
+                                  onChange={(e) => {
+                                    const newRisks = [...formData.security_and_compliance.risk];
+                                    newRisks[index].risk_type = e.target.value;
+                                    handleInputChange('security_and_compliance.risk', newRisks);
+                                  }}
+                                  placeholder="Type of risk"
+                                />
+                              </Form.Group>
+                            </Col>
+                            <Col md={6}>
+                              <Form.Group className="mb-3">
+                                <Form.Label>Mitigation Strategy</Form.Label>
+                                <Form.Control
+                                  as="textarea"
+                                  rows={2}
+                                  value={risk.mitigation_strategy}
+                                  onChange={(e) => {
+                                    const newRisks = [...formData.security_and_compliance.risk];
+                                    newRisks[index].mitigation_strategy = e.target.value;
+                                    handleInputChange('security_and_compliance.risk', newRisks);
+                                  }}
+                                  placeholder="How this risk is mitigated"
+                                />
+                              </Form.Group>
+                            </Col>
+                          </Row>
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => removeArrayItem('security_and_compliance.risk', index)}
+                            disabled={formData.security_and_compliance.risk.length === 1}
+                          >
+                            Remove Risk
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        onClick={() => addArrayItem('security_and_compliance.risk', { risk_type: '', mitigation_strategy: '' })}
+                      >
+                        Add Risk
+                      </Button>
+                    </Form.Group>
+                  </Card.Body>
+                </Card>
+
+                {/* Download Button */}
+                <div className="text-center mt-4">
+                  <Button
+                    variant="success"
+                    size="lg"
+                    onClick={downloadJSON}
+                    className="px-5"
+                  >
+                    Download Model Card as JSON
+                  </Button>
+                </div>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  );
+};
+
+export default ModelCardForm;
