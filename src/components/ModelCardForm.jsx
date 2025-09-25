@@ -172,7 +172,7 @@ const ModelCardForm = () => {
 
   const addArrayItem = (path, defaultValue = '') => {
     setFormData(prev => {
-      const newData = { ...prev };
+      const newData = JSON.parse(JSON.stringify(prev)); // Deep clone to avoid mutations
       const keys = path.split('.');
       let current = newData;
       
@@ -423,16 +423,18 @@ const ModelCardForm = () => {
                           <Button
                             variant="outline-danger"
                             size="sm"
+                            type="button"
                             onClick={() => removeArrayItem('identity_and_basic_information.references', index)}
                             disabled={formData.identity_and_basic_information.references.length === 1}
                           >
-                            Remove
+                            ×
                           </Button>
                         </div>
                       ))}
                       <Button
                         variant="outline-primary"
                         size="sm"
+                        type="button"
                         onClick={() => addArrayItem('identity_and_basic_information.references', '')}
                       >
                         Add Reference
@@ -593,16 +595,18 @@ const ModelCardForm = () => {
                           <Button
                             variant="outline-danger"
                             size="sm"
+                            type="button"
                             onClick={() => removeArrayItem('ownership_and_governance.owners', index)}
                             disabled={formData.ownership_and_governance.owners.length === 1}
                           >
-                            Remove Owner
+                            ×
                           </Button>
                         </div>
                       ))}
                       <Button
                         variant="outline-primary"
                         size="sm"
+                        type="button"
                         onClick={() => addArrayItem('ownership_and_governance.owners', { name: '', contact: '' })}
                       >
                         Add Owner
@@ -647,16 +651,18 @@ const ModelCardForm = () => {
                           <Button
                             variant="outline-danger"
                             size="sm"
+                            type="button"
                             onClick={() => removeArrayItem('technical_specifications.model_parameters.ontology_and_semantic_mapping.ontologies', index)}
                             disabled={formData.technical_specifications.model_parameters.ontology_and_semantic_mapping.ontologies.length === 1}
                           >
-                            Remove
+                            ×
                           </Button>
                         </div>
                       ))}
                       <Button
                         variant="outline-primary"
                         size="sm"
+                        type="button"
                         onClick={() => addArrayItem('technical_specifications.model_parameters.ontology_and_semantic_mapping.ontologies', '')}
                       >
                         Add Ontology
@@ -740,16 +746,18 @@ const ModelCardForm = () => {
                           <Button
                             variant="outline-danger"
                             size="sm"
+                            type="button"
                             onClick={() => removeArrayItem('technical_specifications.model_parameters.libraries', index)}
                             disabled={formData.technical_specifications.model_parameters.libraries.length === 1}
                           >
-                            Remove
+                            ×
                           </Button>
                         </div>
                       ))}
                       <Button
                         variant="outline-primary"
                         size="sm"
+                        type="button"
                         onClick={() => addArrayItem('technical_specifications.model_parameters.libraries', '')}
                       >
                         Add Library
@@ -1095,6 +1103,7 @@ const ModelCardForm = () => {
                   <Button
                     variant="success"
                     size="lg"
+                    type="button"
                     onClick={downloadJSON}
                     className="px-5"
                   >

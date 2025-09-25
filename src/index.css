@@ -16,21 +16,23 @@
   --text-placeholder: #666666;
   
   /* Accent colors */
+  --accent-primary: #BB86FC;
+  --accent-secondary: #03DAC6;
   --accent-blue: #00d4ff;
-  --accent-teal: #1bc49a;
+  --accent-teal: #03DAC6;
   --accent-green: #00ff88;
-  --accent-purple: #8b5cf6;
+  --accent-purple: #BB86FC;
   
   /* Status colors */
-  --success: #10b981;
-  --danger: #ef4444;
-  --warning: #f59e0b;
+  --success: #81C784;
+  --danger: #CF6679;
+  --warning: #FFB74D;
   --info: #3b82f6;
   
   /* Border colors */
   --border-primary: #404040;
   --border-secondary: #333333;
-  --border-focus: var(--accent-blue);
+  --border-focus: var(--accent-primary);
   
   /* Shadow colors */
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -112,13 +114,13 @@ code {
 }
 
 .card-header {
-  background: linear-gradient(135deg, #ff6b35, #f7931e) !important;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) !important;
   border-bottom: 1px solid var(--border-primary) !important;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
-  padding: 1.2rem !important;
+  padding: 1rem !important;
   color: white !important;
-  opacity: 0.85;
-  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+  opacity: 1;
+  box-shadow: 0 2px 8px rgba(187, 134, 252, 0.3);
 }
 
 .card-header h2,
@@ -126,7 +128,7 @@ code {
   color: white !important;
   font-weight: 600;
   margin: 0;
-  font-size: 1.25rem !important; /* Reduced from default sizes */
+  font-size: 1.1rem !important; /* Further reduced for smaller form */
 }
 
 .card-header p {
@@ -137,7 +139,7 @@ code {
 
 .card-body {
   background: var(--bg-card) !important;
-  padding: 2rem !important;
+  padding: 1.5rem !important;
   color: var(--text-primary) !important;
 }
 
@@ -159,7 +161,7 @@ code {
 .form-select:focus {
   background: var(--bg-input-focus) !important;
   border-color: var(--border-focus) !important;
-  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1) !important;
+  box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.1) !important;
   color: var(--text-primary) !important;
   outline: none !important;
 }
@@ -220,13 +222,13 @@ code {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-blue), var(--accent-teal)) !important;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) !important;
   color: white !important;
   box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #00b8e6, #1bc49a) !important;
+  background: linear-gradient(135deg, #a374f0, #02c4b3) !important;
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
@@ -317,11 +319,11 @@ code {
 .form-section h5 {
   color: var(--text-primary) !important;
   font-weight: 600 !important;
-  margin: 2rem 0 1rem 0 !important;
-  padding-bottom: 0.5rem;
+  margin: 1.5rem 0 0.75rem 0 !important;
+  padding-bottom: 0.4rem;
   border-bottom: 2px solid var(--border-secondary);
   position: relative;
-  font-size: 1rem !important; /* Reduced from default h5 size */
+  font-size: 0.9rem !important; /* Further reduced for smaller form */
 }
 
 .form-section h5::after {
@@ -329,14 +331,14 @@ code {
   position: absolute;
   bottom: -2px;
   left: 0;
-  width: 60px;
+  width: 50px;
   height: 2px;
-  background: linear-gradient(90deg, var(--accent-blue), var(--accent-teal));
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
 }
 
 /* Form groups */
 .form-group {
-  margin-bottom: 1.5rem !important;
+  margin-bottom: 1rem !important;
 }
 
 /* Array item containers */
@@ -344,8 +346,8 @@ code {
   background: var(--bg-secondary);
   border: 1px solid var(--border-secondary);
   border-radius: var(--radius-md);
-  padding: 1.5rem;
-  margin-bottom: 1rem;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
   transition: all var(--transition-fast);
 }
 
@@ -364,12 +366,12 @@ code {
 }
 
 .form-check-input:checked {
-  background-color: var(--accent-blue) !important;
-  border-color: var(--accent-blue) !important;
+  background-color: var(--accent-primary) !important;
+  border-color: var(--accent-primary) !important;
 }
 
 .form-check-input:focus {
-  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1) !important;
+  box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.1) !important;
 }
 
 .form-check-label {
