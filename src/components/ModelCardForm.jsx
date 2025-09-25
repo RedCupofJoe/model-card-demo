@@ -226,7 +226,7 @@ const ModelCardForm = () => {
         <Col lg={10}>
           <Card>
             <Card.Header className="bg-primary text-white">
-              <h2 className="mb-0">Aether Model Card Creator</h2>
+              <h2 className="mb-0">Aether Model Card</h2>
               <p className="mb-0">Fill out the form below to create a comprehensive model card</p>
             </Card.Header>
             <Card.Body>
