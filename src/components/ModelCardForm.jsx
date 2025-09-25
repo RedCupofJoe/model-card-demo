@@ -131,6 +131,7 @@ const ModelCardForm = () => {
   });
 
   const [showSuccess, setShowSuccess] = useState(false);
+  const [validationErrors, setValidationErrors] = useState([]);
 
   const handleInputChange = (path, value) => {
     setFormData(prev => {
@@ -203,7 +204,55 @@ const ModelCardForm = () => {
     });
   };
 
+  const validateMandatoryFields = () => {
+    const errors = [];
+    
+    // Check Model Name
+    if (!formData.identity_and_basic_information.model_name.trim()) {
+      errors.push('Model Name is required');
+    }
+    
+    // Check Model Type
+    if (!formData.identity_and_basic_information.model_type.trim()) {
+      errors.push('Model Type is required');
+    }
+    
+    // Check Version Name
+    if (!formData.identity_and_basic_information.version.name.trim()) {
+      errors.push('Version Name is required');
+    }
+    
+    // Check Date of Delivery
+    if (!formData.identity_and_basic_information.version.date_of_model_delivery.trim()) {
+      errors.push('Date of Delivery is required');
+    }
+    
+    // Check Owner's name (first owner)
+    if (!formData.ownership_and_governance.owners[0]?.name.trim()) {
+      errors.push('Owner Name is required');
+    }
+    
+    // Check Owner contract (first owner)
+    if (!formData.ownership_and_governance.owners[0]?.contact.trim()) {
+      errors.push('Owner Contact is required');
+    }
+    
+    return errors;
+  };
+
   const downloadJSON = () => {
+    const errors = validateMandatoryFields();
+    
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      // Scroll to top to show errors
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    
+    // Clear any previous validation errors
+    setValidationErrors([]);
+    
     const dataStr = JSON.stringify(formData, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
     
@@ -236,6 +285,17 @@ const ModelCardForm = () => {
                 </Alert>
               )}
 
+              {validationErrors.length > 0 && (
+                <Alert variant="danger" className="mb-4">
+                  <Alert.Heading>Please fill out all required fields:</Alert.Heading>
+                  <ul className="mb-0">
+                    {validationErrors.map((error, index) => (
+                      <li key={index}>{error}</li>
+                    ))}
+                  </ul>
+                </Alert>
+              )}
+
               <Form>
                 {/* Identity and Basic Information */}
                 <Card className="mb-4">
@@ -246,21 +306,23 @@ const ModelCardForm = () => {
                     <Row>
                       <Col md={6}>
                         <Form.Group className="mb-3">
-                          <Form.Label>Model Name</Form.Label>
+                          <Form.Label>Model Name <span className="text-danger">*</span></Form.Label>
                           <Form.Control
                             type="text"
                             value={formData.identity_and_basic_information.model_name}
                             onChange={(e) => handleInputChange('identity_and_basic_information.model_name', e.target.value)}
                             placeholder="Enter model name"
+                            required
                           />
                         </Form.Group>
                       </Col>
                       <Col md={6}>
                         <Form.Group className="mb-3">
-                          <Form.Label>Model Type</Form.Label>
+                          <Form.Label>Model Type <span className="text-danger">*</span></Form.Label>
                           <Form.Select
                             value={formData.identity_and_basic_information.model_type}
                             onChange={(e) => handleInputChange('identity_and_basic_information.model_type', e.target.value)}
+                            required
                           >
                             <option value="">Select model type</option>
                             {modelTypes.map(type => (
@@ -275,22 +337,24 @@ const ModelCardForm = () => {
                     <Row>
                       <Col md={6}>
                         <Form.Group className="mb-3">
-                          <Form.Label>Version Name</Form.Label>
+                          <Form.Label>Version Name <span className="text-danger">*</span></Form.Label>
                           <Form.Control
                             type="text"
                             value={formData.identity_and_basic_information.version.name}
                             onChange={(e) => handleInputChange('identity_and_basic_information.version.name', e.target.value)}
                             placeholder="e.g., v1.0.0"
+                            required
                           />
                         </Form.Group>
                       </Col>
                       <Col md={6}>
                         <Form.Group className="mb-3">
-                          <Form.Label>Date of Model Delivery</Form.Label>
+                          <Form.Label>Date of Model Delivery <span className="text-danger">*</span></Form.Label>
                           <Form.Control
                             type="date"
                             value={formData.identity_and_basic_information.version.date_of_model_delivery}
                             onChange={(e) => handleInputChange('identity_and_basic_information.version.date_of_model_delivery', e.target.value)}
+                            required
                           />
                         </Form.Group>
                       </Col>
@@ -489,7 +553,7 @@ const ModelCardForm = () => {
                           <Row>
                             <Col md={6}>
                               <Form.Group className="mb-3">
-                                <Form.Label>Name</Form.Label>
+                                <Form.Label>Name {index === 0 && <span className="text-danger">*</span>}</Form.Label>
                                 <Form.Control
                                   type="text"
                                   value={owner.name}
@@ -499,12 +563,13 @@ const ModelCardForm = () => {
                                     handleInputChange('ownership_and_governance.owners', newOwners);
                                   }}
                                   placeholder="Owner name"
+                                  required={index === 0}
                                 />
                               </Form.Group>
                             </Col>
                             <Col md={6}>
                               <Form.Group className="mb-3">
-                                <Form.Label>Contact</Form.Label>
+                                <Form.Label>Contact {index === 0 && <span className="text-danger">*</span>}</Form.Label>
                                 <Form.Control
                                   type="text"
                                   value={owner.contact}
@@ -514,6 +579,7 @@ const ModelCardForm = () => {
                                     handleInputChange('ownership_and_governance.owners', newOwners);
                                   }}
                                   placeholder="Contact information"
+                                  required={index === 0}
                                 />
                               </Form.Group>
                             </Col>

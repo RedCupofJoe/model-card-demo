@@ -118,6 +118,44 @@ The form generates JSON files that conform to the Aether Model Card schema, whic
 - **Limitations & Constraints**: Known limitations and performance tradeoffs
 - **Security & Compliance**: Risk assessment and mitigation strategies
 
+## Model Card Validation
+
+This project includes a Python validation script (`validate_model_card.py`) that ensures generated model cards conform to the Aether Model Card schema.
+
+### Using the Validator
+
+```bash
+# Validate a model card JSON file
+python3 validate_model_card.py your_model_card.json
+
+# Use a custom schema file
+python3 validate_model_card.py --schema custom_schema.json your_model_card.json
+
+# View help
+python3 validate_model_card.py --help
+```
+
+### Validation Features
+
+The validator checks for:
+- **Required fields**: Ensures all mandatory sections and fields are present
+- **Data types**: Validates that fields contain the correct data types (string, number, boolean, array, object)
+- **Enum values**: Verifies that fields with restricted values (like model_type) contain valid options
+- **Format validation**: Checks URI and date formats
+- **Custom rules**: Applies Aether-specific validation logic (e.g., reasonable metric values, non-empty required fields)
+
+### Example Usage
+
+```bash
+# Test with the included sample
+python3 validate_model_card.py sample_model_card.json
+```
+
+The validator will output:
+- ✅ Success message if the model card is valid
+- ❌ Error messages for missing required fields or invalid data
+- ⚠️ Warning messages for potential issues that don't prevent validation
+
 ## Contributing
 
 We welcome feedback and contributions to improve the Aether Model Card standard and this demo application. Please feel free to:
@@ -126,6 +164,7 @@ We welcome feedback and contributions to improve the Aether Model Card standard 
 - Submit pull requests with enhancements
 - Share your experience using the form with real models
 - Provide feedback on the schema completeness and usability
+- Test the validation script with your model cards and report any issues
 
 ## Learn More
 
