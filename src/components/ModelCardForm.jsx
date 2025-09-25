@@ -333,7 +333,9 @@ const ModelCardForm = () => {
                       </Col>
                     </Row>
 
-                    <h5>Version Information</h5>
+                    <div className="form-section">
+                      <h5>Version Information</h5>
+                    </div>
                     <Row>
                       <Col md={6}>
                         <Form.Group className="mb-3">
@@ -445,7 +447,9 @@ const ModelCardForm = () => {
                     <h4>Source and Distribution</h4>
                   </Card.Header>
                   <Card.Body>
-                    <h5>Training Data</h5>
+                    <div className="form-section">
+                      <h5>Training Data</h5>
+                    </div>
                     <Row>
                       <Col md={6}>
                         <Form.Group className="mb-3">
@@ -479,7 +483,9 @@ const ModelCardForm = () => {
                       />
                     </Form.Group>
 
-                    <h5>Evaluation Data</h5>
+                    <div className="form-section">
+                      <h5>Evaluation Data</h5>
+                    </div>
                     <Row>
                       <Col md={6}>
                         <Form.Group className="mb-3">
@@ -549,7 +555,7 @@ const ModelCardForm = () => {
                     <Form.Group className="mb-3">
                       <Form.Label>Owners</Form.Label>
                       {formData.ownership_and_governance.owners.map((owner, index) => (
-                        <div key={index} className="border p-3 mb-3 rounded">
+                        <div key={index} className="array-item">
                           <Row>
                             <Col md={6}>
                               <Form.Group className="mb-3">
@@ -611,7 +617,9 @@ const ModelCardForm = () => {
                     <h4>Technical Specifications</h4>
                   </Card.Header>
                   <Card.Body>
-                    <h5>Model Parameters</h5>
+                    <div className="form-section">
+                      <h5>Model Parameters</h5>
+                    </div>
                     <Form.Group className="mb-3">
                       <Form.Label>Model Architecture</Form.Label>
                       <Form.Control
@@ -622,7 +630,9 @@ const ModelCardForm = () => {
                       />
                     </Form.Group>
 
-                    <h5>Ontology</h5>
+                    <div className="form-section">
+                      <h5>Ontology</h5>
+                    </div>
                     <Form.Group className="mb-3">
                       <Form.Label>Ontologies</Form.Label>
                       {formData.technical_specifications.model_parameters.ontology_and_semantic_mapping.ontologies.map((ontology, index) => (
@@ -746,7 +756,9 @@ const ModelCardForm = () => {
                       </Button>
                     </Form.Group>
 
-                    <h5>Training Parameters</h5>
+                    <div className="form-section">
+                      <h5>Training Parameters</h5>
+                    </div>
                     <Form.Group className="mb-3">
                       <Form.Label>Training Methodology</Form.Label>
                       <Form.Control
@@ -783,7 +795,9 @@ const ModelCardForm = () => {
                       </Col>
                     </Row>
 
-                    <h5>Inference Requirements</h5>
+                    <div className="form-section">
+                      <h5>Inference Requirements</h5>
+                    </div>
                     <Row>
                       <Col md={6}>
                         <Form.Group className="mb-3">
@@ -830,7 +844,9 @@ const ModelCardForm = () => {
                     <h4>Evaluation and Performance</h4>
                   </Card.Header>
                   <Card.Body>
-                    <h5>Metrics</h5>
+                    <div className="form-section">
+                      <h5>Metrics</h5>
+                    </div>
                     <Row>
                       <Col md={4}>
                         <Form.Group className="mb-3">
