@@ -218,7 +218,7 @@ const ModelCardForm = () => {
     setTimeout(() => setShowSuccess(false), 3000);
   };
 
-  const modelTypes = ["Computer Vision", "RF", "EO/IR", "NLP", "Other"];
+  const modelTypes = ["Computer Vision", "Radio Frequency", "Natural Language Processing", "Large Language Model", "Other"];
 
   return (
     <Container fluid className="py-4">
