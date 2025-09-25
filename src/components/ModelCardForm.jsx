@@ -15,7 +15,7 @@ const ModelCardForm = () => {
       overview: '',
       license: '',
       references: [''],
-      citation: ''
+      // citation: ''
     },
     source_and_distribution: {
       data: {
@@ -23,13 +23,13 @@ const ModelCardForm = () => {
           name: '',
           link: '',
           sensitive: false,
-          dataset_link: ''
+          // dataset_link: ''
         },
         eval: {
           name: '',
           link: '',
           sensitive: false,
-          dataset_link: ''
+          // dataset_link: ''
         }
       },
       source_code_url: '',
@@ -46,8 +46,8 @@ const ModelCardForm = () => {
         model_architecture: '',
         ontology_and_semantic_mapping: {
           ontologies: [''],
-          semantic_models: '',
-          external_factors: ''
+          // semantic_models: '',
+          // external_factors: ''
         },
         input_format: '',
         output_format: '',
@@ -330,7 +330,7 @@ const ModelCardForm = () => {
                           />
                         </Form.Group>
                       </Col>
-                      <Col md={6}>
+                      {/* <Col md={6}>
                         <Form.Group className="mb-3">
                           <Form.Label>Citation</Form.Label>
                           <Form.Control
@@ -340,7 +340,7 @@ const ModelCardForm = () => {
                             placeholder="How to reference this model card"
                           />
                         </Form.Group>
-                      </Col>
+                      </Col> */}
                     </Row>
 
                     <Form.Group className="mb-3">
@@ -394,7 +394,7 @@ const ModelCardForm = () => {
                           />
                         </Form.Group>
                       </Col>
-                      <Col md={6}>
+                      {/* <Col md={6}>
                         <Form.Group className="mb-3">
                           <Form.Label>Dataset Link</Form.Label>
                           <Form.Control
@@ -404,7 +404,7 @@ const ModelCardForm = () => {
                             placeholder="https://example.com/dataset"
                           />
                         </Form.Group>
-                      </Col>
+                      </Col> */}
                     </Row>
                     <Form.Group className="mb-3">
                       <Form.Check
@@ -428,7 +428,7 @@ const ModelCardForm = () => {
                           />
                         </Form.Group>
                       </Col>
-                      <Col md={6}>
+                      {/* <Col md={6}>
                         <Form.Group className="mb-3">
                           <Form.Label>Dataset Link</Form.Label>
                           <Form.Control
@@ -438,7 +438,7 @@ const ModelCardForm = () => {
                             placeholder="https://example.com/dataset"
                           />
                         </Form.Group>
-                      </Col>
+                      </Col> */}
                     </Row>
                     <Form.Group className="mb-3">
                       <Form.Check
@@ -450,7 +450,7 @@ const ModelCardForm = () => {
                     </Form.Group>
 
                     <Row>
-                      <Col md={6}>
+                      {/* <Col md={6}>
                         <Form.Group className="mb-3">
                           <Form.Label>Source Code URL</Form.Label>
                           <Form.Control
@@ -460,7 +460,7 @@ const ModelCardForm = () => {
                             placeholder="https://github.com/example/repo"
                           />
                         </Form.Group>
-                      </Col>
+                      </Col> */}
                       <Col md={6}>
                         <Form.Group className="mb-3">
                           <Form.Label>Model Origin</Form.Label>
@@ -556,6 +556,64 @@ const ModelCardForm = () => {
                       />
                     </Form.Group>
 
+                    <h5>Ontology</h5>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Ontologies</Form.Label>
+                      {formData.technical_specifications.model_parameters.ontology_and_semantic_mapping.ontologies.map((ontology, index) => (
+                        <div key={index} className="d-flex mb-2">
+                          <Form.Control
+                            type="text"
+                            value={ontology}
+                            onChange={(e) => handleArrayChange('technical_specifications.model_parameters.ontology_and_semantic_mapping.ontologies', index, e.target.value)}
+                            placeholder="Specify any ontologies used"
+                            className="me-2"
+                          />
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => removeArrayItem('technical_specifications.model_parameters.ontology_and_semantic_mapping.ontologies', index)}
+                            disabled={formData.technical_specifications.model_parameters.ontology_and_semantic_mapping.ontologies.length === 1}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        onClick={() => addArrayItem('technical_specifications.model_parameters.ontology_and_semantic_mapping.ontologies', '')}
+                      >
+                        Add Ontology
+                      </Button>
+                    </Form.Group>
+
+                    {/* <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Semantic Models</Form.Label>
+                          <Form.Control
+                            as="textarea"
+                            rows={3}
+                            value={formData.technical_specifications.model_parameters.ontology_and_semantic_mapping.semantic_models}
+                            onChange={(e) => handleInputChange('technical_specifications.model_parameters.ontology_and_semantic_mapping.semantic_models', e.target.value)}
+                            placeholder="Specify any semantic models used"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>External Factors</Form.Label>
+                          <Form.Control
+                            as="textarea"
+                            rows={3}
+                            value={formData.technical_specifications.model_parameters.ontology_and_semantic_mapping.external_factors}
+                            onChange={(e) => handleInputChange('technical_specifications.model_parameters.ontology_and_semantic_mapping.external_factors', e.target.value)}
+                            placeholder="Specify any external factors that influenced classification and their integration within the ontology or semantic model"
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row> */}
+
                     <Row>
                       <Col md={4}>
                         <Form.Group className="mb-3">
@@ -635,7 +693,7 @@ const ModelCardForm = () => {
                     </Form.Group>
 
                     <Row>
-                      <Col md={6}>
+                      {/* <Col md={6}>
                         <Form.Group className="mb-3">
                           <Form.Label>Data Card Link</Form.Label>
                           <Form.Control
@@ -645,7 +703,7 @@ const ModelCardForm = () => {
                             placeholder="https://example.com/data-card"
                           />
                         </Form.Group>
-                      </Col>
+                      </Col> */}
                       <Col md={6}>
                         <Form.Group className="mb-3">
                           <Form.Label>Dependencies</Form.Label>
@@ -754,7 +812,7 @@ const ModelCardForm = () => {
                         placeholder="Method or other relevant information"
                       />
                     </Form.Group>
-
+{/* 
                     <Row>
                       <Col md={6}>
                         <Form.Group className="mb-3">
@@ -780,9 +838,9 @@ const ModelCardForm = () => {
                           />
                         </Form.Group>
                       </Col>
-                    </Row>
+                    </Row> */}
 
-                    <Form.Group className="mb-3">
+                    {/* <Form.Group className="mb-3">
                       <Form.Label>Evaluation Objective</Form.Label>
                       <Form.Control
                         as="textarea"
@@ -791,9 +849,9 @@ const ModelCardForm = () => {
                         onChange={(e) => handleInputChange('evaluation_and_performance.evaluation_objective', e.target.value)}
                         placeholder="State the primary goals and intended outcomes of the evaluation process"
                       />
-                    </Form.Group>
+                    </Form.Group> */}
 
-                    <Form.Group className="mb-3">
+                    {/* <Form.Group className="mb-3">
                       <Form.Label>Evaluation System</Form.Label>
                       <Form.Control
                         as="textarea"
@@ -802,12 +860,12 @@ const ModelCardForm = () => {
                         onChange={(e) => handleInputChange('evaluation_and_performance.evaluation_system', e.target.value)}
                         placeholder="System(s), platform(s), or testbed environment(s) used"
                       />
-                    </Form.Group>
+                    </Form.Group> */}
                   </Card.Body>
                 </Card>
 
                 {/* Limitations and Constraints */}
-                <Card className="mb-4">
+                {/* <Card className="mb-4">
                   <Card.Header>
                     <h4>Limitations and Constraints</h4>
                   </Card.Header>
@@ -874,10 +932,10 @@ const ModelCardForm = () => {
                       </Button>
                     </Form.Group>
                   </Card.Body>
-                </Card>
+                </Card> */}
 
                 {/* Security and Compliance */}
-                <Card className="mb-4">
+                {/* <Card className="mb-4">
                   <Card.Header>
                     <h4>Security and Compliance</h4>
                   </Card.Header>
@@ -948,7 +1006,7 @@ const ModelCardForm = () => {
                       </Button>
                     </Form.Group>
                   </Card.Body>
-                </Card>
+                </Card> */}
 
                 {/* Download Button */}
                 <div className="text-center mt-4">

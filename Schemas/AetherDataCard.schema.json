@@ -85,6 +85,24 @@
                 "filename_convention":{ "type": "string", "description": "If filename_standard is true above, then its conventio/description is detailed here." }
                 }
             },
+            "ontology_and_semantic_mapping": {
+                "type": "object",
+                "properties": {
+                    "ontologies": {
+                        "type": "array",
+                        "items": { "type": "string" },
+                        "description": "Specify any ontologies used in the dataset"
+                    },
+                    "semantic_models": {
+                        "type": "string",
+                        "description": "Specify any semantic models used in the dataset"
+                    },
+                    "external_factors": {
+                        "type": "string",
+                        "description": "Specify any external factors that influenced data classification and their integration within the ontology or semantic model"
+                    }
+                }
+            },
             "security_quality_info": {
               "type": "object",
               "properties": {
