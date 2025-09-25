@@ -1,0 +1,477 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Aether Model Card Schema",
+    "type": "object",
+    "required": [
+        "identity_and_basic_information",
+        "source_and_distribution",
+        "ownership_and_governance",
+        "technical_specifications",
+        "evaluation_and_performance",
+        "deployment_and_operations",
+        "limitations_and_constraints",
+        "security_and_risk_assessment"
+    ],
+    "properties": {
+        "identity_and_basic_information": {
+            "type": "object",
+            "properties": {
+                "model_name": {
+                    "type": "string",
+                    "description": "Enter the name of the model"
+                },
+                "model_type": {
+                    "type": "string",
+                    "enum": [
+                        "Computer Vision",
+                        "RF",
+                        "EO/IR",
+                        "NLP",
+                        "Other"
+                    ]
+                },
+                "version": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "Enter the version name"
+                        },
+                        "date": {
+                            "type": "string",
+                            "pattern": "\\{[^}]+\\}\\{[^}]+\\},\\{[^}]+\\}",
+                            "description": "Must follow the template: '{month} {day}, {year}."
+                        },
+                        "model_difference": {
+                            "type": "string",
+                            "description": "The changes from the previous version."
+                        },
+                        "date_of_model_delivery": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                },
+                "overview": {
+                    "type": "string",
+                    "description": "What makes this model unique or distinguish from other models for what purpose. What specifications set it apart"
+                },
+                "license": {
+                    "type": "string",
+                    "description": "Specify the license under which the model is released"
+                },
+                "references": {
+                    "description": "Links providing more information about the model.",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "format": "uri"
+                    }
+                },
+                "citation": {
+                    "type": "string",
+                    "description": "How to reference this model card"
+                }
+            }
+        },
+        "source_and_distribution": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "description": "The datasets used to train and evaluate the model.",
+                    "type": "object",
+                    "properties": {
+                        "train": {
+                            "$ref": "#/definitions/dataset"
+                        },
+                        "eval": {
+                            "$ref": "#/definitions/dataset"
+                        }
+                    }
+                },
+                "source_code_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Link to source code repository"
+                },
+                "model_origin": {
+                    "type": "string",
+                    "description": "Where or by whom was the model developed?"
+                }
+            }
+        },
+        "ownership_and_governance": {
+            "type": "object",
+            "properties": {
+                "owners": {
+                    "description": "The individuals or teams who own the model.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/owner"
+                    }
+                }
+            }
+        },
+        "technical_specifications": {
+            "type": "object",
+            "properties": {
+                "model_parameters": {
+                    "type": "object",
+                    "properties": {
+                        "model_architecture": {
+                            "type": "string",
+                            "description": "The architecture of the model"
+                        },
+                        "ontology_and_semantic_mapping": {
+                            "type": "object",
+                            "properties": {
+                                "ontologies": {
+                                    "type": "array",
+                                    "description": "Specify any ontologies used"
+                                },
+                                "semantic_models": {
+                                    "type": "string",
+                                    "description": "Specify any semantic models used"
+                                },
+                                "external_factors": {
+                                    "type": "string",
+                                    "description": "Specify any external factors that influenced classification and their integration within the ontology or semantic model"
+                                }
+                            }
+                        },
+                        "input_format": {
+                            "type": "string",
+                            "description": "The data format for inputs to the model"
+                        },
+                        "output_format": {
+                            "type": "string",
+                            "description": "The data format for outputs from the model"
+                        },
+                        "format": {
+                            "type": "string",
+                            "description": "Format of the model itself"
+                        },
+                        "libraries": {
+                            "type": "array",
+                            "description": "Libraries used when building the model"
+                        }
+                    }
+                },
+                "training_parameters": {
+                    "type": "object",
+                    "properties": {
+                        "training_methodology": {
+                            "type": "string",
+                            "description": "How was the model trained?"
+                        },
+                        "data_card_link": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "Link to the data card"
+                        },
+                        "dependencies": {
+                            "type": "string",
+                            "description": "Lock file generated by a package manager (e.g., package-lock.json) that specifies all the supporting libraries that were installed for the model training."
+                        }
+                    }
+                },
+                "inference_requirements": {
+                    "type": "object",
+                    "properties": {
+                        "software": {
+                            "type": "string",
+                            "description": "Deployment library dependencies"
+                        },
+                        "hardware": {
+                            "type": "string",
+                            "description": "Hardware required for model deployment"
+                        },
+                        "deployment_constraints": {
+                            "type": "string",
+                            "description": "Indicate whether the model is optimized for on-premises, cloud, edge devices, or hybrid environments. Also, any special requirements such as FPGA/ASIC accelerators, real-time processing constraints, or secure enclave compatibility."
+                        },
+                        "model_output": {
+                            "output_format": {
+                                "type": "string",
+                                "description": "Specify output structure, e.g., classification labels, segmentation masks, object detections"                            
+                            },
+                            "coordinate_base_used": {
+                                "type": "string",
+                                "description": "e.g., pixel space, geographic coordinates, relative positions"
+                            },
+                            "geolocation_rules": {
+                                "type": "string",
+                                "description": "e.g., point-based, bounding box, track-based outputs"
+                            }
+                        },
+                        "inference_format": {
+                            "type": "array",
+                            "description": "List of supported input formats for inference, including data type, serialization method, and transport protocol. Use this section to clearly document how inputs must be structured for deployment systems to interact with the model.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Name of the format or standard (e.g., ONNX, TorchScript, TensorFlow SavedModel, JSON)."
+                                    },
+                                    "version": {
+                                        "type": "string",
+                                        "description": "Version or release identifier of the format, if applicable."
+                                    },
+                                    "data_type": {
+                                        "type": "string",
+                                        "description": "Expected input data type(s), such as float32 tensors, int8 quantized tensors, images, audio waveforms, or structured text."
+                                    },
+                                    "serialization": {
+                                        "type": "string",
+                                        "description": "Serialization method or encoding (e.g., Protobuf, JSON, MessagePack, NumPy arrays)."
+                                    },
+                                    "protocol": {
+                                        "type": "string",
+                                        "description": "Transport or API protocol for inference requests (e.g., REST, gRPC, Kafka streaming, file-based batch)."
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "description": "Additional details or constraints, such as batching requirements, input shape conventions, or compression methods."
+                                    }
+                                },
+                                "required": ["name", "data_type"]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "evaluation_and_performance": {
+            "type": "object",
+            "properties": {
+                "metrics": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "description": "Which performance measure was used?"
+                        },
+                        "value": {
+                            "type": "number",
+                            "description": "Value of the metric"
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "Method, or other relevant information"
+                        },
+                        "confidence_interval": {
+                            "type": "object",
+                            "properties": {
+                                "lower_bound": {
+                                    "type": "number",
+                                    "description": "Lower bound of the confidence interval"
+                                },
+                                "upper_bound": {
+                                    "type": "number",
+                                    "description": "Upper bound of the confidence interval"
+                                }
+                            }
+                        },
+                        "decision_thresholds": {
+                            "type": "string",
+                            "description": "The decision threshold the metric was computed on"
+                        },
+                        "slice": {
+                            "type": "string",
+                            "description": "The name of the slice this metric was computed on. If not sliced, leave blank."
+                        },
+                        "assumptions": {
+                            "type": "string",
+                            "description": "All assumptions made during testing and evaluation"
+                        }
+                    }
+                },
+                "evaluation_infrastructure": {
+                    "hardware_requirements": {
+                        "type": "string",
+                        "description": "Specify minimum and recommended resources needed to run the model in a production environment, including compute power, e.g., system CPU/GPU/TPU requirements, memory and storage capacity."                 
+                    },
+                    "evaluation_constraints": {
+                        "type": "string",
+                        "description": "Indicate whether the model is optimized for on-prem, cloud, edge devices, or hybrid environments."                 
+                    },
+                    "other_evaluation_requirements": {
+                        "type": "string",
+                        "description": "Other special requirements such as sensors, FPGA/ASIC accelerators, real-time processing constraints, or secure enclave compatibility."                 
+                    }
+                },
+                "evaluation_data": {
+                    "type": "array",
+                    "description": "List of datasets or data sources used during evaluation. Each entry should include metadata such as dataset name, origin, size, domain, and licensing details to enable reproducibility and transparency.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Name of the dataset (e.g., ImageNet, SQuAD, custom financial transactions dataset)."
+                            },
+                            "version": {
+                                "type": "string",
+                                "description": "Version, release, or snapshot date of the dataset."
+                            },
+                            "source": {
+                                "type": "string",
+                                "description": "URL, DOI, or citation reference for the dataset."
+                            }
+                        },
+                        "required": ["name"]
+                    }
+                },
+                "evaluation_team": {
+                    "type": "array",
+                    "description": "List of individuals, groups, or organizations responsible for conducting the evaluation. Helps clarify who performed the evaluation, their expertise, and whether the evaluation was internal, external, or a hybrid effort.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Name of the evaluator (person, team, or organization)."
+                            },
+                            "role": {
+                                "type": "string",
+                                "description": "Role in the evaluation process (e.g., lead evaluator, annotator, auditor)."
+                            },
+                            "affiliation": {
+                                "type": "string",
+                                "description": "Institution, company, or independent group affiliation."
+                            },
+                            "expertise": {
+                                "type": "string",
+                                "description": "Relevant expertise or credentials (e.g., NLP researcher, medical doctor, certified auditor)."
+                            },
+                            "evaluation_type": {
+                                "type": "string",
+                                "description": "Internal, external, or hybrid evaluation effort."
+                            },
+                            "contact": {
+                                "type": "string",
+                                "description": "Optional contact info (e.g., email or website) for accountability or follow-up."
+                            }
+                        },
+                        "required": ["name", "role"]
+                    }
+                },
+                "evaluation_objective": {
+                    "type": "string",
+                    "description": "State the primary goals and intended outcomes of the evaluation process. This may include validating baseline accuracy, benchmarking against alternative models, stress-testing for robustness, ensuring compliance with regulatory standards, or assessing performance trade-offs such as latency vs. accuracy. Clearly define what success looks like in the context of model evaluation."
+                },
+                "evaluation_system": {
+                    "type": "string",
+                    "description": "Identify the system(s), platform(s), or testbed environment(s) used to conduct model evaluation. This may include operating systems, container runtimes, orchestration frameworks, benchmarking suites, or standardized evaluation platforms. Provide enough detail so results can be reproduced or compared across different setups."
+                },
+                "benchmark_standard": {
+                    "type": "array",
+                    "description": "List of benchmark datasets, suites, or standardized tasks used to evaluate the model. Include names, versions, and optionally sources to ensure transparency and reproducibility.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Name of the benchmark dataset, suite, or task (e.g., GLUE, ImageNet, MLPerf)."
+                            },
+                            "version": {
+                                "type": "string",
+                                "description": "Version or release identifier of the benchmark, if applicable."
+                            },
+                            "source": {
+                                "type": "string",
+                                "description": "URL, DOI, or citation reference for the benchmark resource."
+                            }
+                        },
+                        "required": ["name"]
+                    }
+                }
+            }
+        },
+        "limitations_and_constraints": {
+            "type": "object",
+            "properties": {
+                "limitations": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "What are the known technical limitations of the model? E.g. What kind(s) of data should the model be expected not to perform well on? What are the factors that might degrade model performance?"
+                    }
+                },
+                "tradeoffs": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "What are the known tradeoffs in accuracy/performance of the model?"
+                    }
+                }
+            }
+        },
+        "security_and_compliance": {
+            "type": "object",
+            "properties": {
+                "security_card_link": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Link to security card"
+                },
+                "risk": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "risk_type": {
+                                "type": "string",
+                                "description": "Name or type of risk"
+                            },
+                            "mitigation_strategy": {
+                                "type": "string",
+                                "description": "Strategy used to address this risk"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "owner": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of the owner."
+                },
+                "contact": {
+                    "type": "string",
+                    "description": "The contact information of the owner."
+                }
+            }
+        },
+        "dataset": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of the dataset."
+                },
+                "link": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "A link to the dataset."
+                },
+                "sensitive": {
+                    "type": "boolean",
+                    "description": "Does this dataset contain human or other sensitive data?",
+                    "const": "True"
+                },
+                "dataset_link": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Link to the dataset"
+                }
+            }
+        }
+    }
+}
