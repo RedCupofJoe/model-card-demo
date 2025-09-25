@@ -1,6 +1,73 @@
-# Getting Started with Create React App
+# Aether Model Card Demo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project provides a web-based form for creating standardized **Aether Model Cards** - comprehensive documentation for AI/ML models that ensures transparency, accountability, and reproducibility in model development and deployment.
+
+## Why Fill Out This Form?
+
+Model cards are essential documentation that provide critical information about AI/ML models, including their intended use, performance characteristics, limitations, and ethical considerations. The Aether Model Card standard extends traditional model cards with enhanced fields for:
+
+- **Technical Specifications**: Detailed architecture, training parameters, and inference requirements
+- **Evaluation Metrics**: Comprehensive performance data with confidence intervals and decision thresholds
+- **Security & Risk Assessment**: Risk identification and mitigation strategies
+- **Deployment Constraints**: Hardware, software, and environmental requirements
+- **Governance & Ownership**: Clear accountability and contact information
+
+By completing this form, you create a standardized JSON document that can be:
+- Shared with stakeholders for model approval and deployment decisions
+- Used for regulatory compliance and audit trails
+- Integrated into MLOps pipelines for automated model governance
+- Referenced for model comparison and selection processes
+
+## Early Evaluation Program
+
+This demo application is being used to gather feedback and validate the Aether Model Card schema through early evaluations with:
+
+- **ML Engineers & Data Scientists**: Testing the form's usability and completeness for documenting real-world models
+- **Model Governance Teams**: Evaluating the schema's effectiveness for compliance and risk management
+- **Deployment Engineers**: Assessing whether the technical specifications provide sufficient deployment guidance
+- **Security Teams**: Validating the risk assessment and security documentation sections
+
+### How Your Input Helps
+
+When you fill out and download a model card:
+- The form structure is tested for completeness and ease of use
+- Field definitions are validated against real model documentation needs
+- The generated JSON schema is evaluated for integration with existing MLOps tools
+- User experience feedback helps refine the interface and workflow
+
+Your participation helps improve the Aether Model Card standard and ensures it meets the practical needs of the AI/ML community.
+
+## Getting Started
+
+### Prerequisites
+- Node.js (version 14 or higher)
+- npm or yarn package manager
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/MLOps-OpenAPI/model-card-demo.git
+cd model-card-demo
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start the development server:
+```bash
+npm start
+```
+
+4. Open [http://localhost:3000](http://localhost:3000) to view the application in your browser.
+
+### Using the Form
+
+1. **Fill out the model information**: Complete the form sections with details about your AI/ML model
+2. **Download the JSON**: Click "Download Model Card as JSON" to generate a standardized model card file
+3. **Share and integrate**: Use the generated JSON file in your MLOps workflows, compliance processes, or model registries
 
 ## Available Scripts
 
@@ -39,32 +106,29 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
+## Schema Information
+
+The form generates JSON files that conform to the Aether Model Card schema, which includes the following main sections:
+
+- **Identity & Basic Information**: Model name, type, version, and overview
+- **Source & Distribution**: Training/evaluation data and model origin
+- **Ownership & Governance**: Model owners and contact information
+- **Technical Specifications**: Architecture, parameters, and inference requirements
+- **Evaluation & Performance**: Metrics, benchmarks, and evaluation infrastructure
+- **Limitations & Constraints**: Known limitations and performance tradeoffs
+- **Security & Compliance**: Risk assessment and mitigation strategies
+
+## Contributing
+
+We welcome feedback and contributions to improve the Aether Model Card standard and this demo application. Please feel free to:
+
+- Report issues or suggest improvements
+- Submit pull requests with enhancements
+- Share your experience using the form with real models
+- Provide feedback on the schema completeness and usability
+
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
