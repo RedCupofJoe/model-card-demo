@@ -227,7 +227,7 @@ const ModelCardForm = () => {
           <Card>
             <Card.Header className="bg-primary text-white">
               <h2 className="mb-0">Aether Model Card</h2>
-              <p className="mb-0">Fill out the form below to create a comprehensive model card</p>
+              <p className="mb-0">Fill out the form below to create a model card</p>
             </Card.Header>
             <Card.Body>
               {showSuccess && (
@@ -246,7 +246,7 @@ const ModelCardForm = () => {
                     <Row>
                       <Col md={6}>
                         <Form.Group className="mb-3">
-                          <Form.Label>Model Name *</Form.Label>
+                          <Form.Label>Model Name</Form.Label>
                           <Form.Control
                             type="text"
                             value={formData.identity_and_basic_information.model_name}
@@ -257,7 +257,7 @@ const ModelCardForm = () => {
                       </Col>
                       <Col md={6}>
                         <Form.Group className="mb-3">
-                          <Form.Label>Model Type *</Form.Label>
+                          <Form.Label>Model Type</Form.Label>
                           <Form.Select
                             value={formData.identity_and_basic_information.model_type}
                             onChange={(e) => handleInputChange('identity_and_basic_information.model_type', e.target.value)}
@@ -785,7 +785,7 @@ const ModelCardForm = () => {
                             step="0.001"
                             value={formData.evaluation_and_performance.metrics.value}
                             onChange={(e) => handleInputChange('evaluation_and_performance.metrics.value', parseFloat(e.target.value) || '')}
-                            placeholder="0.95"
+                            placeholder="0.00"
                           />
                         </Form.Group>
                       </Col>
@@ -796,7 +796,7 @@ const ModelCardForm = () => {
                             type="text"
                             value={formData.evaluation_and_performance.metrics.decision_thresholds}
                             onChange={(e) => handleInputChange('evaluation_and_performance.metrics.decision_thresholds', e.target.value)}
-                            placeholder="0.5"
+                            placeholder="0.00"
                           />
                         </Form.Group>
                       </Col>
