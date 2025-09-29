@@ -386,6 +386,23 @@
                         },
                         "required": ["name"]
                     }
+                },
+                "responsible_ai": {
+                    "rai_framework_legal": {
+                        "type": "string",
+                        "description": "The model meets legal requirements per {US Domestic Law, international laws or treaties}.",
+                        "pattern": "^The model meets legal requirements per \\{[^}]+\\}\\.$"
+                    },
+                    "rai_framework_policy": {
+                        "type": "string",
+                        "description": "The model meets policy requirements per {DoD Directives/Memorandum, Defense Acquisition System regulations, ...}.",
+                        "pattern": "^The model meets policy requirements per  \\{[^}]+\\}\\.$"
+                    },
+                    "rai_framework_risk": {
+                        "type": "string",
+                        "description": "The model developer has considered {cyber/adversarial, human systems integration, reliability, model, data pipeline, ...} risks per {CDAO Reliable AI Toolkit, DoD AI Guide on Risk (DAGR), NIST AI Risk Management Framework, ...}.",
+                        "pattern": "^The model developer has considered \\{[^}]+\\} risks per \\{[^}]+\\}\\.$"
+                    }
                 }
             }
         },
