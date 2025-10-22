@@ -1,6 +1,99 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Form, Button, Card, Alert } from 'react-bootstrap';
 
+const formatScalarForYAML = (value) => {
+  if (value === null) {
+    return 'null';
+  }
+
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+
+  if (typeof value === 'string') {
+    if (value === '') {
+      return "''";
+    }
+    return JSON.stringify(value);
+  }
+
+  return JSON.stringify(value);
+};
+
+const convertToYAML = (value, indent = 0) => {
+  const indentStr = '  '.repeat(indent);
+  const nextIndentStr = '  '.repeat(indent + 1);
+
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      return `${indentStr}[]`;
+    }
+
+    const lines = [];
+    value.forEach((item) => {
+      if (item !== null && typeof item === 'object') {
+        const itemLines = convertToYAML(item, indent + 1).split('\n');
+        const firstLine = itemLines[0] || '';
+        const normalizedFirstLine = firstLine.startsWith(nextIndentStr)
+          ? firstLine.slice(nextIndentStr.length)
+          : firstLine.trimStart();
+        lines.push(`${indentStr}- ${normalizedFirstLine}`);
+        for (let i = 1; i < itemLines.length; i += 1) {
+          const currentLine = itemLines[i] || '';
+          const normalizedLine = currentLine.startsWith(nextIndentStr)
+            ? currentLine.slice(nextIndentStr.length)
+            : currentLine.trimStart();
+          lines.push(`${nextIndentStr}${normalizedLine}`);
+        }
+      } else {
+        lines.push(`${indentStr}- ${formatScalarForYAML(item)}`);
+      }
+    });
+
+    return lines.join('\n');
+  }
+
+  if (value !== null && typeof value === 'object') {
+    const entries = Object.entries(value);
+    if (entries.length === 0) {
+      return `${indentStr}{}`;
+    }
+
+    const lines = [];
+    entries.forEach(([key, val]) => {
+      if (val === undefined) {
+        lines.push(`${indentStr}${key}:`);
+      } else if (val === null) {
+        lines.push(`${indentStr}${key}: null`);
+      } else if (Array.isArray(val)) {
+        if (val.length === 0) {
+          lines.push(`${indentStr}${key}: []`);
+        } else {
+          const arrayYAML = convertToYAML(val, indent + 1);
+          lines.push(`${indentStr}${key}:`);
+          lines.push(arrayYAML);
+        }
+      } else if (typeof val === 'object') {
+        const nestedYAML = convertToYAML(val, indent + 1);
+        lines.push(`${indentStr}${key}:`);
+        lines.push(nestedYAML);
+      } else if (val === '') {
+        lines.push(`${indentStr}${key}: ''`);
+      } else {
+        lines.push(`${indentStr}${key}: ${formatScalarForYAML(val)}`);
+      }
+    });
+
+    return lines.join('\n');
+  }
+
+  if (value === '') {
+    return `${indentStr}''`;
+  }
+
+  return `${indentStr}${formatScalarForYAML(value)}`;
+};
+
 const ModelCardForm = () => {
   const [formData, setFormData] = useState({
     identity_and_basic_information: {
@@ -145,6 +238,7 @@ const ModelCardForm = () => {
   });
 
   const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const [validationErrors, setValidationErrors] = useState([]);
 
   const handleInputChange = (path, value) => {
@@ -254,31 +348,50 @@ const ModelCardForm = () => {
     return errors;
   };
 
-  const downloadJSON = () => {
+  const downloadModelCard = (format = 'json') => {
     const errors = validateMandatoryFields();
-    
+
     if (errors.length > 0) {
       setValidationErrors(errors);
+      setShowSuccess(false);
       // Scroll to top to show errors
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-    
+
     // Clear any previous validation errors
     setValidationErrors([]);
-    
-    const dataStr = JSON.stringify(formData, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = `${formData.identity_and_basic_information.model_name || 'model_card'}_${new Date().toISOString().split('T')[0]}.json`;
-    
+
+    let dataStr = '';
+    let mimeType = 'application/json';
+    let extension = 'json';
+
+    if (format === 'yaml') {
+      dataStr = `---\n${convertToYAML(formData)}`;
+      mimeType = 'text/yaml';
+      extension = 'yaml';
+    } else {
+      dataStr = JSON.stringify(formData, null, 2);
+    }
+
+    const dataUri = `data:${mimeType};charset=utf-8,${encodeURIComponent(dataStr)}`;
+
+    const exportFileDefaultName = `${formData.identity_and_basic_information.model_name || 'model_card'}_${new Date().toISOString().split('T')[0]}.${extension}`;
+
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
+    document.body.appendChild(linkElement);
     linkElement.click();
-    
+    document.body.removeChild(linkElement);
+
+    const formatLabel = format === 'yaml' ? 'YAML' : 'JSON';
+    setSuccessMessage(`Model card downloaded as ${formatLabel}!`);
     setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
+    setTimeout(() => {
+      setShowSuccess(false);
+      setSuccessMessage('');
+    }, 3000);
   };
 
   const modelTypes = ["Computer Vision", "Radio Frequency", "Natural Language Processing", "Large Language Model", "Other"];
@@ -295,7 +408,7 @@ const ModelCardForm = () => {
             <Card.Body>
               {showSuccess && (
                 <Alert variant="success" className="mb-4">
-                  Model card downloaded successfully!
+                  {successMessage || 'Model card downloaded successfully!'}
                 </Alert>
               )}
 
@@ -498,6 +611,9 @@ const ModelCardForm = () => {
                             onChange={(e) => handleInputChange('source_and_distribution.data.train.hash', e.target.value)}
                             placeholder="Checksum or fingerprint"
                           />
+                          <Form.Text className="text-muted">
+                            Provide the digest used to validate the training dataset contents.
+                          </Form.Text>
                         </Form.Group>
                       </Col>
                       <Col md={4}>
@@ -559,6 +675,9 @@ const ModelCardForm = () => {
                             onChange={(e) => handleInputChange('source_and_distribution.data.eval.hash', e.target.value)}
                             placeholder="Checksum or fingerprint"
                           />
+                          <Form.Text className="text-muted">
+                            Enter the digest verifying the evaluation dataset snapshot.
+                          </Form.Text>
                         </Form.Group>
                       </Col>
                       <Col md={4}>
@@ -1117,6 +1236,9 @@ const ModelCardForm = () => {
                         onChange={(e) => handleInputChange('evaluation_and_performance.bias_analysis', e.target.value)}
                         placeholder="Summarize any bias evaluation procedures and findings"
                       />
+                      <Form.Text className="text-muted">
+                        Note methodologies, affected cohorts, and mitigations discovered during bias studies.
+                      </Form.Text>
                     </Form.Group>
 
                     <Form.Group className="mb-3">
@@ -1128,6 +1250,9 @@ const ModelCardForm = () => {
                         onChange={(e) => handleInputChange('evaluation_and_performance.fairness_metrics', e.target.value)}
                         placeholder="List fairness or equity metrics and associated outcomes"
                       />
+                      <Form.Text className="text-muted">
+                        Capture quantitative fairness indicators (e.g., demographic parity) and resulting values.
+                      </Form.Text>
                     </Form.Group>
 {/*
                     <Row>
@@ -1326,15 +1451,24 @@ const ModelCardForm = () => {
                 </Card> */}
 
                 {/* Download Button */}
-                <div className="text-center mt-4">
+                <div className="d-flex justify-content-center gap-3 mt-4 flex-wrap">
                   <Button
                     variant="success"
                     size="lg"
                     type="button"
-                    onClick={downloadJSON}
-                    className="px-5"
+                    onClick={() => downloadModelCard('json')}
+                    className="px-4"
                   >
-                    Download Model Card as JSON
+                    Download JSON
+                  </Button>
+                  <Button
+                    variant="outline-success"
+                    size="lg"
+                    type="button"
+                    onClick={() => downloadModelCard('yaml')}
+                    className="px-4"
+                  >
+                    Download YAML
                   </Button>
                 </div>
               </Form>
