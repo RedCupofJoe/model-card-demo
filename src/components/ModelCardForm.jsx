@@ -23,14 +23,23 @@ const ModelCardForm = () => {
           name: '',
           link: '',
           sensitive: false,
+          hash: '',
+          hash_algorithm: '',
           // dataset_link: ''
         },
         eval: {
           name: '',
           link: '',
           sensitive: false,
+          hash: '',
+          hash_algorithm: '',
           // dataset_link: ''
         }
+      },
+      data_schema: '',
+      model_artifact: {
+        hash: '',
+        hash_algorithm: ''
       },
       source_code_url: '',
       model_origin: ''
@@ -59,6 +68,9 @@ const ModelCardForm = () => {
         data_card_link: '',
         dependencies: ''
       },
+      preprocessing_steps: [''], // Document each transformation applied before training
+      post_training_steps: [''], // Capture calibrations, distillation, or other post-training work
+      hyperparameter_tuning_steps: [''], // Outline search strategies and optimized parameter sets
       inference_requirements: {
         software: '',
         hardware: '',
@@ -111,6 +123,8 @@ const ModelCardForm = () => {
       }],
       evaluation_objective: '',
       evaluation_system: '',
+      bias_analysis: '',
+      fairness_metrics: '',
       benchmark_standard: [{
         name: '',
         version: '',
@@ -449,11 +463,22 @@ const ModelCardForm = () => {
                     <h4>Source and Distribution</h4>
                   </Card.Header>
                   <Card.Body>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Data Schema</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={formData.source_and_distribution.data_schema}
+                        onChange={(e) => handleInputChange('source_and_distribution.data_schema', e.target.value)}
+                        placeholder="Describe the structure and fields of the data"
+                      />
+                    </Form.Group>
+
                     <div className="form-section">
                       <h5>Training Data</h5>
                     </div>
                     <Row>
-                      <Col md={6}>
+                      <Col md={4}>
                         <Form.Group className="mb-3">
                           <Form.Label>Dataset Name</Form.Label>
                           <Form.Control
@@ -462,6 +487,31 @@ const ModelCardForm = () => {
                             onChange={(e) => handleInputChange('source_and_distribution.data.train.name', e.target.value)}
                             placeholder="Training dataset name"
                           />
+                        </Form.Group>
+                      </Col>
+                      <Col md={4}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Dataset Hash</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.source_and_distribution.data.train.hash}
+                            onChange={(e) => handleInputChange('source_and_distribution.data.train.hash', e.target.value)}
+                            placeholder="Checksum or fingerprint"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={4}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Hashing Algorithm</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.source_and_distribution.data.train.hash_algorithm}
+                            onChange={(e) => handleInputChange('source_and_distribution.data.train.hash_algorithm', e.target.value)}
+                            placeholder="e.g., SHA-256"
+                          />
+                          <Form.Text className="text-muted">
+                            Document the algorithm used to produce this dataset hash.
+                          </Form.Text>
                         </Form.Group>
                       </Col>
                       {/* <Col md={6}>
@@ -489,7 +539,7 @@ const ModelCardForm = () => {
                       <h5>Evaluation Data</h5>
                     </div>
                     <Row>
-                      <Col md={6}>
+                      <Col md={4}>
                         <Form.Group className="mb-3">
                           <Form.Label>Dataset Name</Form.Label>
                           <Form.Control
@@ -498,6 +548,31 @@ const ModelCardForm = () => {
                             onChange={(e) => handleInputChange('source_and_distribution.data.eval.name', e.target.value)}
                             placeholder="Evaluation dataset name"
                           />
+                        </Form.Group>
+                      </Col>
+                      <Col md={4}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Dataset Hash</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.source_and_distribution.data.eval.hash}
+                            onChange={(e) => handleInputChange('source_and_distribution.data.eval.hash', e.target.value)}
+                            placeholder="Checksum or fingerprint"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={4}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Hashing Algorithm</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.source_and_distribution.data.eval.hash_algorithm}
+                            onChange={(e) => handleInputChange('source_and_distribution.data.eval.hash_algorithm', e.target.value)}
+                            placeholder="e.g., SHA-256"
+                          />
+                          <Form.Text className="text-muted">
+                            Record the algorithm associated with this evaluation dataset hash.
+                          </Form.Text>
                         </Form.Group>
                       </Col>
                       {/* <Col md={6}>
@@ -520,6 +595,37 @@ const ModelCardForm = () => {
                         onChange={(e) => handleInputChange('source_and_distribution.data.eval.sensitive', e.target.checked)}
                       />
                     </Form.Group>
+
+                    <div className="form-section">
+                      <h5>Model Artifact Integrity</h5>
+                    </div>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Model Hash</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.source_and_distribution.model_artifact.hash}
+                            onChange={(e) => handleInputChange('source_and_distribution.model_artifact.hash', e.target.value)}
+                            placeholder="Checksum or fingerprint for the model artifact"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Hashing Algorithm</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.source_and_distribution.model_artifact.hash_algorithm}
+                            onChange={(e) => handleInputChange('source_and_distribution.model_artifact.hash_algorithm', e.target.value)}
+                            placeholder="e.g., SHA-256"
+                          />
+                          <Form.Text className="text-muted">
+                            Specify the algorithm used to verify the model artifact.
+                          </Form.Text>
+                        </Form.Group>
+                      </Col>
+                    </Row>
 
                     <Row>
                       {/* <Col md={6}>
@@ -803,6 +909,105 @@ const ModelCardForm = () => {
                       </Col>
                     </Row>
 
+                    <Form.Group className="mb-3">
+                      <Form.Label>Preprocessing Steps</Form.Label>
+                      {formData.technical_specifications.preprocessing_steps.map((step, index) => (
+                        <div key={index} className="d-flex mb-2">
+                          <Form.Control
+                            as="textarea"
+                            rows={2}
+                            value={step}
+                            onChange={(e) => handleArrayChange('technical_specifications.preprocessing_steps', index, e.target.value)}
+                            placeholder="Describe a preprocessing step"
+                            className="me-2"
+                          />
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            type="button"
+                            onClick={() => removeArrayItem('technical_specifications.preprocessing_steps', index)}
+                            disabled={formData.technical_specifications.preprocessing_steps.length === 1}
+                          >
+                            ×
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        type="button"
+                        onClick={() => addArrayItem('technical_specifications.preprocessing_steps', '')}
+                      >
+                        Add Step
+                      </Button>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Post-Training Steps</Form.Label>
+                      {formData.technical_specifications.post_training_steps.map((step, index) => (
+                        <div key={index} className="d-flex mb-2">
+                          <Form.Control
+                            as="textarea"
+                            rows={2}
+                            value={step}
+                            onChange={(e) => handleArrayChange('technical_specifications.post_training_steps', index, e.target.value)}
+                            placeholder="Document an applied post-training adjustment"
+                            className="me-2"
+                          />
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            type="button"
+                            onClick={() => removeArrayItem('technical_specifications.post_training_steps', index)}
+                            disabled={formData.technical_specifications.post_training_steps.length === 1}
+                          >
+                            ×
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        type="button"
+                        onClick={() => addArrayItem('technical_specifications.post_training_steps', '')}
+                      >
+                        Add Step
+                      </Button>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Hyperparameter Tuning Steps</Form.Label>
+                      {formData.technical_specifications.hyperparameter_tuning_steps.map((step, index) => (
+                        <div key={index} className="d-flex mb-2">
+                          <Form.Control
+                            as="textarea"
+                            rows={2}
+                            value={step}
+                            onChange={(e) => handleArrayChange('technical_specifications.hyperparameter_tuning_steps', index, e.target.value)}
+                            placeholder="Summarize hyperparameter tuning iterations or results"
+                            className="me-2"
+                          />
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            type="button"
+                            onClick={() => removeArrayItem('technical_specifications.hyperparameter_tuning_steps', index)}
+                            disabled={formData.technical_specifications.hyperparameter_tuning_steps.length === 1}
+                          >
+                            ×
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        type="button"
+                        onClick={() => addArrayItem('technical_specifications.hyperparameter_tuning_steps', '')}
+                      >
+                        Add Step
+                      </Button>
+                    </Form.Group>
+
                     <div className="form-section">
                       <h5>Inference Requirements</h5>
                     </div>
@@ -902,7 +1107,29 @@ const ModelCardForm = () => {
                         placeholder="Method or other relevant information"
                       />
                     </Form.Group>
-{/* 
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Bias Analysis</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={formData.evaluation_and_performance.bias_analysis}
+                        onChange={(e) => handleInputChange('evaluation_and_performance.bias_analysis', e.target.value)}
+                        placeholder="Summarize any bias evaluation procedures and findings"
+                      />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Fairness Metrics</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={formData.evaluation_and_performance.fairness_metrics}
+                        onChange={(e) => handleInputChange('evaluation_and_performance.fairness_metrics', e.target.value)}
+                        placeholder="List fairness or equity metrics and associated outcomes"
+                      />
+                    </Form.Group>
+{/*
                     <Row>
                       <Col md={6}>
                         <Form.Group className="mb-3">
