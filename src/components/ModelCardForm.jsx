@@ -106,6 +106,9 @@ const ModelCardForm = () => {
         date_of_model_delivery: ''
       },
       overview: '',
+      intended_use: '',
+      out_of_scope: '',
+      risk_level: '',
       license: '',
       references: [''],
       // citation: ''
@@ -218,6 +221,16 @@ const ModelCardForm = () => {
       evaluation_system: '',
       bias_analysis: '',
       fairness_metrics: '',
+      environmental_impact_of_training: '',
+      reviewers: [{
+        name: '',
+        contact: '',
+        date_reviewed: ''
+      }],
+      continuous_monitoring: {
+        enabled: '',
+        data_uri: ''
+      },
       benchmark_standard: [{
         name: '',
         version: '',
@@ -511,6 +524,28 @@ const ModelCardForm = () => {
                       />
                     </Form.Group>
 
+                    <Form.Group className="mb-3">
+                      <Form.Label>Intended Use</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={formData.identity_and_basic_information.intended_use}
+                        onChange={(e) => handleInputChange('identity_and_basic_information.intended_use', e.target.value)}
+                        placeholder="Describe primary applications and supported scenarios"
+                      />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Out-of-Scope</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={formData.identity_and_basic_information.out_of_scope}
+                        onChange={(e) => handleInputChange('identity_and_basic_information.out_of_scope', e.target.value)}
+                        placeholder="Document disallowed, high-risk, or unsupported uses"
+                      />
+                    </Form.Group>
+
                     <Row>
                       <Col md={6}>
                         <Form.Group className="mb-3">
@@ -520,6 +555,17 @@ const ModelCardForm = () => {
                             value={formData.identity_and_basic_information.license}
                             onChange={(e) => handleInputChange('identity_and_basic_information.license', e.target.value)}
                             placeholder="e.g., MIT, Apache 2.0"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Risk Level</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.identity_and_basic_information.risk_level}
+                            onChange={(e) => handleInputChange('identity_and_basic_information.risk_level', e.target.value)}
+                            placeholder="e.g., Low, Medium, High"
                           />
                         </Form.Group>
                       </Col>
@@ -1226,6 +1272,155 @@ const ModelCardForm = () => {
                         placeholder="Method or other relevant information"
                       />
                     </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Environmental Impact of Training</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={formData.evaluation_and_performance.environmental_impact_of_training}
+                        onChange={(e) =>
+                          handleInputChange('evaluation_and_performance.environmental_impact_of_training', e.target.value)
+                        }
+                        placeholder="Summarize compute usage, carbon footprint, or sustainability considerations"
+                      />
+                      <Form.Text className="text-muted">
+                        Document energy consumption estimates, offsets, or other sustainability metrics gathered during training.
+                      </Form.Text>
+                    </Form.Group>
+
+                    <div className="form-section">
+                      <h5>Reviewers</h5>
+                    </div>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Reviewer Details</Form.Label>
+                      {formData.evaluation_and_performance.reviewers.map((reviewer, index) => (
+                        <div key={index} className="array-item mb-3 p-3 border rounded">
+                          <Row>
+                            <Col md={4}>
+                              <Form.Group className="mb-3 mb-md-0">
+                                <Form.Label>Name</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  value={reviewer.name}
+                                  onChange={(e) => {
+                                    const reviewers = [...formData.evaluation_and_performance.reviewers];
+                                    reviewers[index] = {
+                                      ...reviewers[index],
+                                      name: e.target.value
+                                    };
+                                    handleInputChange('evaluation_and_performance.reviewers', reviewers);
+                                  }}
+                                  placeholder="Reviewer name"
+                                />
+                              </Form.Group>
+                            </Col>
+                            <Col md={4}>
+                              <Form.Group className="mb-3 mb-md-0">
+                                <Form.Label>Contact</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  value={reviewer.contact}
+                                  onChange={(e) => {
+                                    const reviewers = [...formData.evaluation_and_performance.reviewers];
+                                    reviewers[index] = {
+                                      ...reviewers[index],
+                                      contact: e.target.value
+                                    };
+                                    handleInputChange('evaluation_and_performance.reviewers', reviewers);
+                                  }}
+                                  placeholder="email@example.com"
+                                />
+                              </Form.Group>
+                            </Col>
+                            <Col md={4}>
+                              <Form.Group>
+                                <Form.Label>Date Reviewed</Form.Label>
+                                <Form.Control
+                                  type="date"
+                                  value={reviewer.date_reviewed}
+                                  onChange={(e) => {
+                                    const reviewers = [...formData.evaluation_and_performance.reviewers];
+                                    reviewers[index] = {
+                                      ...reviewers[index],
+                                      date_reviewed: e.target.value
+                                    };
+                                    handleInputChange('evaluation_and_performance.reviewers', reviewers);
+                                  }}
+                                />
+                              </Form.Group>
+                            </Col>
+                          </Row>
+                          <div className="text-end mt-2">
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              type="button"
+                              onClick={() => {
+                                const reviewers = [...formData.evaluation_and_performance.reviewers];
+                                reviewers.splice(index, 1);
+                                handleInputChange(
+                                  'evaluation_and_performance.reviewers',
+                                  reviewers.length > 0 ? reviewers : [{ name: '', contact: '', date_reviewed: '' }]
+                                );
+                              }}
+                              disabled={formData.evaluation_and_performance.reviewers.length === 1}
+                            >
+                              Remove Reviewer
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        type="button"
+                        onClick={() => {
+                          const reviewers = [
+                            ...formData.evaluation_and_performance.reviewers,
+                            { name: '', contact: '', date_reviewed: '' }
+                          ];
+                          handleInputChange('evaluation_and_performance.reviewers', reviewers);
+                        }}
+                      >
+                        Add Reviewer
+                      </Button>
+                    </Form.Group>
+
+                    <div className="form-section">
+                      <h5>Continuous Monitoring</h5>
+                    </div>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Continuous Monitoring</Form.Label>
+                          <Form.Select
+                            value={formData.evaluation_and_performance.continuous_monitoring.enabled}
+                            onChange={(e) =>
+                              handleInputChange('evaluation_and_performance.continuous_monitoring.enabled', e.target.value)
+                            }
+                          >
+                            <option value="">Select an option</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                          </Form.Select>
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Continuous Monitoring Data URI</Form.Label>
+                          <Form.Control
+                            type="url"
+                            value={formData.evaluation_and_performance.continuous_monitoring.data_uri}
+                            onChange={(e) =>
+                              handleInputChange('evaluation_and_performance.continuous_monitoring.data_uri', e.target.value)
+                            }
+                            placeholder="https://example.com/monitoring-data"
+                            disabled={formData.evaluation_and_performance.continuous_monitoring.enabled !== 'Yes'}
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
 
                     <Form.Group className="mb-3">
                       <Form.Label>Bias Analysis</Form.Label>
