@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Form, Button, Card, Alert } from 'react-bootstrap';
 import { dump as dumpYAML } from 'js-yaml';
+import { submitModelCard } from '../services/apiClient';
+import { mapFormDataToApiPayload } from '../utils/formDataMappers';
 
 const sanitizeFileName = (rawName) => {
   if (!rawName || typeof rawName !== 'string') {
@@ -184,6 +186,8 @@ const ModelCardForm = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [validationErrors, setValidationErrors] = useState([]);
+  const [apiFeedback, setApiFeedback] = useState({ type: null, message: '' });
+  const [isSubmittingToApi, setIsSubmittingToApi] = useState(false);
 
   const handleInputChange = (path, value) => {
     setFormData(prev => {
@@ -298,6 +302,7 @@ const ModelCardForm = () => {
     if (errors.length > 0) {
       setValidationErrors(errors);
       setShowSuccess(false);
+      setApiFeedback({ type: 'error', message: 'Please resolve the required fields before downloading or submitting.' });
       // Scroll to top to show errors
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
@@ -305,6 +310,7 @@ const ModelCardForm = () => {
 
     // Clear any previous validation errors
     setValidationErrors([]);
+    setApiFeedback({ type: null, message: '' });
 
     const { content, mimeType, extension, label } = buildDownloadPayload(formData, format);
     const fileName = `${sanitizeFileName(formData.identity_and_basic_information.model_name)}_${new Date()
@@ -330,6 +336,32 @@ const ModelCardForm = () => {
       }, 3000);
     } finally {
       window.URL.revokeObjectURL(downloadUrl);
+    }
+  };
+
+  const handleSubmitToApi = async () => {
+    const errors = validateMandatoryFields();
+
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      setShowSuccess(false);
+      setApiFeedback({ type: 'error', message: 'Please resolve the required fields before submitting to the API.' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    setValidationErrors([]);
+    setApiFeedback({ type: null, message: '' });
+    setIsSubmittingToApi(true);
+
+    try {
+      const payload = mapFormDataToApiPayload(formData);
+      await submitModelCard(payload);
+      setApiFeedback({ type: 'success', message: 'Model card submitted to the API successfully.' });
+    } catch (error) {
+      setApiFeedback({ type: 'error', message: error.message || 'Failed to submit the model card to the API.' });
+    } finally {
+      setIsSubmittingToApi(false);
     }
   };
 
@@ -359,6 +391,12 @@ const ModelCardForm = () => {
                       <li key={index}>{error}</li>
                     ))}
                   </ul>
+                </Alert>
+              )}
+
+              {apiFeedback.type && (
+                <Alert variant={apiFeedback.type === 'error' ? 'danger' : 'success'} className="mb-4">
+                  {apiFeedback.message}
                 </Alert>
               )}
 
@@ -1391,6 +1429,16 @@ const ModelCardForm = () => {
 
                 {/* Download Button */}
                 <div className="d-flex justify-content-center gap-3 mt-4 flex-wrap">
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    type="button"
+                    onClick={handleSubmitToApi}
+                    className="px-4"
+                    disabled={isSubmittingToApi}
+                  >
+                    {isSubmittingToApi ? 'Submitting…' : 'Submit to API'}
+                  </Button>
                   <Button
                     variant="success"
                     size="lg"
