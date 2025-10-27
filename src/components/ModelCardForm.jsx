@@ -40,6 +40,99 @@ const buildDownloadPayload = (data, format = 'json') => {
   };
 };
 
+const formatScalarForYAML = (value) => {
+  if (value === null) {
+    return 'null';
+  }
+
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+
+  if (typeof value === 'string') {
+    if (value === '') {
+      return "''";
+    }
+    return JSON.stringify(value);
+  }
+
+  return JSON.stringify(value);
+};
+
+const convertToYAML = (value, indent = 0) => {
+  const indentStr = '  '.repeat(indent);
+  const nextIndentStr = '  '.repeat(indent + 1);
+
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      return `${indentStr}[]`;
+    }
+
+    const lines = [];
+    value.forEach((item) => {
+      if (item !== null && typeof item === 'object') {
+        const itemLines = convertToYAML(item, indent + 1).split('\n');
+        const firstLine = itemLines[0] || '';
+        const normalizedFirstLine = firstLine.startsWith(nextIndentStr)
+          ? firstLine.slice(nextIndentStr.length)
+          : firstLine.trimStart();
+        lines.push(`${indentStr}- ${normalizedFirstLine}`);
+        for (let i = 1; i < itemLines.length; i += 1) {
+          const currentLine = itemLines[i] || '';
+          const normalizedLine = currentLine.startsWith(nextIndentStr)
+            ? currentLine.slice(nextIndentStr.length)
+            : currentLine.trimStart();
+          lines.push(`${nextIndentStr}${normalizedLine}`);
+        }
+      } else {
+        lines.push(`${indentStr}- ${formatScalarForYAML(item)}`);
+      }
+    });
+
+    return lines.join('\n');
+  }
+
+  if (value !== null && typeof value === 'object') {
+    const entries = Object.entries(value);
+    if (entries.length === 0) {
+      return `${indentStr}{}`;
+    }
+
+    const lines = [];
+    entries.forEach(([key, val]) => {
+      if (val === undefined) {
+        lines.push(`${indentStr}${key}:`);
+      } else if (val === null) {
+        lines.push(`${indentStr}${key}: null`);
+      } else if (Array.isArray(val)) {
+        if (val.length === 0) {
+          lines.push(`${indentStr}${key}: []`);
+        } else {
+          const arrayYAML = convertToYAML(val, indent + 1);
+          lines.push(`${indentStr}${key}:`);
+          lines.push(arrayYAML);
+        }
+      } else if (typeof val === 'object') {
+        const nestedYAML = convertToYAML(val, indent + 1);
+        lines.push(`${indentStr}${key}:`);
+        lines.push(nestedYAML);
+      } else if (val === '') {
+        lines.push(`${indentStr}${key}: ''`);
+      } else {
+        lines.push(`${indentStr}${key}: ${formatScalarForYAML(val)}`);
+      }
+    });
+
+    return lines.join('\n');
+  }
+
+  if (value === '') {
+    return `${indentStr}''`;
+  }
+
+  return `${indentStr}${formatScalarForYAML(value)}`;
+};
+
 const ModelCardForm = () => {
   const [formData, setFormData] = useState({
     identity_and_basic_information: {
@@ -52,6 +145,9 @@ const ModelCardForm = () => {
         date_of_model_delivery: ''
       },
       overview: '',
+      intended_use: '',
+      out_of_scope: '',
+      risk_level: '',
       license: '',
       references: [''],
       // citation: ''
@@ -164,6 +260,16 @@ const ModelCardForm = () => {
       evaluation_system: '',
       bias_analysis: '',
       fairness_metrics: '',
+      environmental_impact_of_training: '',
+      reviewers: [{
+        name: '',
+        contact: '',
+        date_reviewed: ''
+      }],
+      continuous_monitoring: {
+        enabled: '',
+        data_uri: ''
+      },
       benchmark_standard: [{
         name: '',
         version: '',
@@ -363,6 +469,37 @@ const ModelCardForm = () => {
     } finally {
       setIsSubmittingToApi(false);
     }
+
+    let dataStr = '';
+    let mimeType = 'application/json';
+    let extension = 'json';
+
+    if (format === 'yaml') {
+      dataStr = `---\n${convertToYAML(formData)}`;
+      mimeType = 'text/yaml';
+      extension = 'yaml';
+    } else {
+      dataStr = JSON.stringify(formData, null, 2);
+    }
+
+    const dataUri = `data:${mimeType};charset=utf-8,${encodeURIComponent(dataStr)}`;
+
+    const exportFileDefaultName = `${formData.identity_and_basic_information.model_name || 'model_card'}_${new Date().toISOString().split('T')[0]}.${extension}`;
+
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    document.body.appendChild(linkElement);
+    linkElement.click();
+    document.body.removeChild(linkElement);
+
+    const formatLabel = format === 'yaml' ? 'YAML' : 'JSON';
+    setSuccessMessage(`Model card downloaded as ${formatLabel}!`);
+    setShowSuccess(true);
+    setTimeout(() => {
+      setShowSuccess(false);
+      setSuccessMessage('');
+    }, 3000);
   };
 
   const modelTypes = ["Computer Vision", "Radio Frequency", "Natural Language Processing", "Large Language Model", "Other"];
@@ -488,6 +625,28 @@ const ModelCardForm = () => {
                       />
                     </Form.Group>
 
+                    <Form.Group className="mb-3">
+                      <Form.Label>Intended Use</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={formData.identity_and_basic_information.intended_use}
+                        onChange={(e) => handleInputChange('identity_and_basic_information.intended_use', e.target.value)}
+                        placeholder="Describe primary applications and supported scenarios"
+                      />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Out-of-Scope</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={formData.identity_and_basic_information.out_of_scope}
+                        onChange={(e) => handleInputChange('identity_and_basic_information.out_of_scope', e.target.value)}
+                        placeholder="Document disallowed, high-risk, or unsupported uses"
+                      />
+                    </Form.Group>
+
                     <Row>
                       <Col md={6}>
                         <Form.Group className="mb-3">
@@ -497,6 +656,17 @@ const ModelCardForm = () => {
                             value={formData.identity_and_basic_information.license}
                             onChange={(e) => handleInputChange('identity_and_basic_information.license', e.target.value)}
                             placeholder="e.g., MIT, Apache 2.0"
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Risk Level</Form.Label>
+                          <Form.Control
+                            type="text"
+                            value={formData.identity_and_basic_information.risk_level}
+                            onChange={(e) => handleInputChange('identity_and_basic_information.risk_level', e.target.value)}
+                            placeholder="e.g., Low, Medium, High"
                           />
                         </Form.Group>
                       </Col>
@@ -1203,6 +1373,155 @@ const ModelCardForm = () => {
                         placeholder="Method or other relevant information"
                       />
                     </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Environmental Impact of Training</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        value={formData.evaluation_and_performance.environmental_impact_of_training}
+                        onChange={(e) =>
+                          handleInputChange('evaluation_and_performance.environmental_impact_of_training', e.target.value)
+                        }
+                        placeholder="Summarize compute usage, carbon footprint, or sustainability considerations"
+                      />
+                      <Form.Text className="text-muted">
+                        Document energy consumption estimates, offsets, or other sustainability metrics gathered during training.
+                      </Form.Text>
+                    </Form.Group>
+
+                    <div className="form-section">
+                      <h5>Reviewers</h5>
+                    </div>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Reviewer Details</Form.Label>
+                      {formData.evaluation_and_performance.reviewers.map((reviewer, index) => (
+                        <div key={index} className="array-item mb-3 p-3 border rounded">
+                          <Row>
+                            <Col md={4}>
+                              <Form.Group className="mb-3 mb-md-0">
+                                <Form.Label>Name</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  value={reviewer.name}
+                                  onChange={(e) => {
+                                    const reviewers = [...formData.evaluation_and_performance.reviewers];
+                                    reviewers[index] = {
+                                      ...reviewers[index],
+                                      name: e.target.value
+                                    };
+                                    handleInputChange('evaluation_and_performance.reviewers', reviewers);
+                                  }}
+                                  placeholder="Reviewer name"
+                                />
+                              </Form.Group>
+                            </Col>
+                            <Col md={4}>
+                              <Form.Group className="mb-3 mb-md-0">
+                                <Form.Label>Contact</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  value={reviewer.contact}
+                                  onChange={(e) => {
+                                    const reviewers = [...formData.evaluation_and_performance.reviewers];
+                                    reviewers[index] = {
+                                      ...reviewers[index],
+                                      contact: e.target.value
+                                    };
+                                    handleInputChange('evaluation_and_performance.reviewers', reviewers);
+                                  }}
+                                  placeholder="email@example.com"
+                                />
+                              </Form.Group>
+                            </Col>
+                            <Col md={4}>
+                              <Form.Group>
+                                <Form.Label>Date Reviewed</Form.Label>
+                                <Form.Control
+                                  type="date"
+                                  value={reviewer.date_reviewed}
+                                  onChange={(e) => {
+                                    const reviewers = [...formData.evaluation_and_performance.reviewers];
+                                    reviewers[index] = {
+                                      ...reviewers[index],
+                                      date_reviewed: e.target.value
+                                    };
+                                    handleInputChange('evaluation_and_performance.reviewers', reviewers);
+                                  }}
+                                />
+                              </Form.Group>
+                            </Col>
+                          </Row>
+                          <div className="text-end mt-2">
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              type="button"
+                              onClick={() => {
+                                const reviewers = [...formData.evaluation_and_performance.reviewers];
+                                reviewers.splice(index, 1);
+                                handleInputChange(
+                                  'evaluation_and_performance.reviewers',
+                                  reviewers.length > 0 ? reviewers : [{ name: '', contact: '', date_reviewed: '' }]
+                                );
+                              }}
+                              disabled={formData.evaluation_and_performance.reviewers.length === 1}
+                            >
+                              Remove Reviewer
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        type="button"
+                        onClick={() => {
+                          const reviewers = [
+                            ...formData.evaluation_and_performance.reviewers,
+                            { name: '', contact: '', date_reviewed: '' }
+                          ];
+                          handleInputChange('evaluation_and_performance.reviewers', reviewers);
+                        }}
+                      >
+                        Add Reviewer
+                      </Button>
+                    </Form.Group>
+
+                    <div className="form-section">
+                      <h5>Continuous Monitoring</h5>
+                    </div>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Continuous Monitoring</Form.Label>
+                          <Form.Select
+                            value={formData.evaluation_and_performance.continuous_monitoring.enabled}
+                            onChange={(e) =>
+                              handleInputChange('evaluation_and_performance.continuous_monitoring.enabled', e.target.value)
+                            }
+                          >
+                            <option value="">Select an option</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                          </Form.Select>
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Continuous Monitoring Data URI</Form.Label>
+                          <Form.Control
+                            type="url"
+                            value={formData.evaluation_and_performance.continuous_monitoring.data_uri}
+                            onChange={(e) =>
+                              handleInputChange('evaluation_and_performance.continuous_monitoring.data_uri', e.target.value)
+                            }
+                            placeholder="https://example.com/monitoring-data"
+                            disabled={formData.evaluation_and_performance.continuous_monitoring.enabled !== 'Yes'}
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
 
                     <Form.Group className="mb-3">
                       <Form.Label>Bias Analysis</Form.Label>
