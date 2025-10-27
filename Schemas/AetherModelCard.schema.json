@@ -97,6 +97,23 @@
                 "model_origin": {
                     "type": "string",
                     "description": "Where or by whom was the model developed?"
+                },
+                "data_schema": {
+                    "type": "string",
+                    "description": "Description of the schema applied to the training and evaluation data."
+                },
+                "model_artifact": {
+                    "type": "object",
+                    "properties": {
+                        "hash": {
+                            "type": "string",
+                            "description": "Cryptographic digest representing the model artifact."
+                        },
+                        "hash_algorithm": {
+                            "type": "string",
+                            "description": "Hashing algorithm used for the model artifact (e.g., SHA-256)."
+                        }
+                    }
                 }
             }
         },
@@ -193,7 +210,7 @@
                         "model_output": {
                             "output_format": {
                                 "type": "string",
-                                "description": "Specify output structure, e.g., classification labels, segmentation masks, object detections"                            
+                                "description": "Specify output structure, e.g., classification labels, segmentation masks, object detections"
                             },
                             "coordinate_base_used": {
                                 "type": "string",
@@ -235,9 +252,33 @@
                                         "description": "Additional details or constraints, such as batching requirements, input shape conventions, or compression methods."
                                     }
                                 },
-                                "required": ["name", "data_type"]
+                                "required": [
+                                    "name",
+                                    "data_type"
+                                ]
                             }
                         }
+                    }
+                },
+                "preprocessing_steps": {
+                    "type": "array",
+                    "description": "Transformations applied to data prior to training.",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "post_training_steps": {
+                    "type": "array",
+                    "description": "Activities performed after training such as calibration or optimization.",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "hyperparameter_tuning_steps": {
+                    "type": "array",
+                    "description": "Procedures used to tune model hyperparameters.",
+                    "items": {
+                        "type": "string"
                     }
                 }
             }
@@ -290,15 +331,15 @@
                 "evaluation_infrastructure": {
                     "hardware_requirements": {
                         "type": "string",
-                        "description": "Specify minimum and recommended resources needed to run the model in a production environment, including compute power, e.g., system CPU/GPU/TPU requirements, memory and storage capacity."                 
+                        "description": "Specify minimum and recommended resources needed to run the model in a production environment, including compute power, e.g., system CPU/GPU/TPU requirements, memory and storage capacity."
                     },
                     "evaluation_constraints": {
                         "type": "string",
-                        "description": "Indicate whether the model is optimized for on-prem, cloud, edge devices, or hybrid environments."                 
+                        "description": "Indicate whether the model is optimized for on-prem, cloud, edge devices, or hybrid environments."
                     },
                     "other_evaluation_requirements": {
                         "type": "string",
-                        "description": "Other special requirements such as sensors, FPGA/ASIC accelerators, real-time processing constraints, or secure enclave compatibility."                 
+                        "description": "Other special requirements such as sensors, FPGA/ASIC accelerators, real-time processing constraints, or secure enclave compatibility."
                     }
                 },
                 "evaluation_data": {
@@ -320,7 +361,9 @@
                                 "description": "URL, DOI, or citation reference for the dataset."
                             }
                         },
-                        "required": ["name"]
+                        "required": [
+                            "name"
+                        ]
                     }
                 },
                 "evaluation_team": {
@@ -354,7 +397,10 @@
                                 "description": "Optional contact info (e.g., email or website) for accountability or follow-up."
                             }
                         },
-                        "required": ["name", "role"]
+                        "required": [
+                            "name",
+                            "role"
+                        ]
                     }
                 },
                 "evaluation_objective": {
@@ -384,7 +430,9 @@
                                 "description": "URL, DOI, or citation reference for the benchmark resource."
                             }
                         },
-                        "required": ["name"]
+                        "required": [
+                            "name"
+                        ]
                     }
                 },
                 "responsible_ai": {
@@ -403,6 +451,14 @@
                         "description": "The model developer has considered {cyber/adversarial, human systems integration, reliability, model, data pipeline, ...} risks per {CDAO Reliable AI Toolkit, DoD AI Guide on Risk (DAGR), NIST AI Risk Management Framework, ...}.",
                         "pattern": "^The model developer has considered \\{[^}]+\\} risks per \\{[^}]+\\}\\.$"
                     }
+                },
+                "bias_analysis": {
+                    "type": "string",
+                    "description": "Narrative describing observed biases and methodologies used to assess them."
+                },
+                "fairness_metrics": {
+                    "type": "string",
+                    "description": "Quantitative fairness metrics captured during evaluation."
                 }
             }
         },
@@ -487,6 +543,14 @@
                     "type": "string",
                     "format": "uri",
                     "description": "Link to the dataset"
+                },
+                "hash": {
+                    "type": "string",
+                    "description": "Cryptographic digest representing dataset contents."
+                },
+                "hash_algorithm": {
+                    "type": "string",
+                    "description": "Hashing algorithm used to generate the dataset hash (e.g., SHA-256)."
                 }
             }
         }
