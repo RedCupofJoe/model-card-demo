@@ -3,6 +3,7 @@ import { Container, Row, Col, Form, Button, Card, Alert } from 'react-bootstrap'
 import { dump as dumpYAML } from 'js-yaml';
 import { submitModelCard } from '../services/apiClient';
 import { mapFormDataToApiPayload } from '../utils/formDataMappers';
+import { validateModelCardSchema } from '../utils/schemaValidator';
 
 const sanitizeFileName = (rawName) => {
   if (!rawName || typeof rawName !== 'string') {
@@ -402,13 +403,28 @@ const ModelCardForm = () => {
     return errors;
   };
 
-  const downloadModelCard = (format = 'json') => {
+  const runAllValidations = () => {
     const errors = validateMandatoryFields();
+    const { valid, errors: schemaErrors } = validateModelCardSchema(formData);
+
+    if (!valid) {
+      schemaErrors.forEach((error) => {
+        if (!errors.includes(error)) {
+          errors.push(error);
+        }
+      });
+    }
+
+    return errors;
+  };
+
+  const downloadModelCard = (format = 'json') => {
+    const errors = runAllValidations();
 
     if (errors.length > 0) {
       setValidationErrors(errors);
       setShowSuccess(false);
-      setApiFeedback({ type: 'error', message: 'Please resolve the required fields before downloading or submitting.' });
+      setApiFeedback({ type: 'error', message: 'Please resolve the validation errors before downloading or submitting.' });
       // Scroll to top to show errors
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
@@ -446,12 +462,12 @@ const ModelCardForm = () => {
   };
 
   const handleSubmitToApi = async () => {
-    const errors = validateMandatoryFields();
+    const errors = runAllValidations();
 
     if (errors.length > 0) {
       setValidationErrors(errors);
       setShowSuccess(false);
-      setApiFeedback({ type: 'error', message: 'Please resolve the required fields before submitting to the API.' });
+      setApiFeedback({ type: 'error', message: 'Please resolve the validation errors before submitting to the API.' });
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -522,7 +538,7 @@ const ModelCardForm = () => {
 
               {validationErrors.length > 0 && (
                 <Alert variant="danger" className="mb-4">
-                  <Alert.Heading>Please fill out all required fields:</Alert.Heading>
+                  <Alert.Heading>Please address the following validation issues:</Alert.Heading>
                   <ul className="mb-0">
                     {validationErrors.map((error, index) => (
                       <li key={index}>{error}</li>

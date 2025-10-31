@@ -1,0 +1,369 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Aether Model Card Schema",
+  "type": "object",
+  "required": [
+    "identity_and_basic_information",
+    "source_and_distribution",
+    "ownership_and_governance",
+    "technical_specifications",
+    "evaluation_and_performance",
+    "limitations_and_constraints",
+    "security_and_compliance"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "identity_and_basic_information": {
+      "type": "object",
+      "required": [
+        "model_name",
+        "model_type",
+        "version"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "model_name": { "type": "string" },
+        "model_type": {
+          "type": "string",
+          "enum": [
+            "",
+            "Computer Vision",
+            "Radio Frequency",
+            "Natural Language Processing",
+            "Large Language Model",
+            "Other"
+          ]
+        },
+        "version": {
+          "type": "object",
+          "required": ["name", "date_of_model_delivery"],
+          "additionalProperties": true,
+          "properties": {
+            "name": { "type": "string" },
+            "date": { "type": "string" },
+            "model_difference": { "type": "string" },
+            "date_of_model_delivery": { "type": "string", "format": "date" }
+          }
+        },
+        "overview": { "type": "string" },
+        "intended_use": { "type": "string" },
+        "out_of_scope": { "type": "string" },
+        "risk_level": { "type": "string" },
+        "license": { "type": "string" },
+        "references": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "citation": { "type": "string" }
+      }
+    },
+    "source_and_distribution": {
+      "type": "object",
+      "required": ["data"],
+      "additionalProperties": true,
+      "properties": {
+        "data": {
+          "type": "object",
+          "required": ["train", "eval"],
+          "additionalProperties": false,
+          "properties": {
+            "train": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "link": { "type": "string" },
+                "sensitive": { "type": "boolean" },
+                "hash": { "type": "string" },
+                "hash_algorithm": { "type": "string" },
+                "dataset_link": { "type": "string" }
+              }
+            },
+            "eval": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "link": { "type": "string" },
+                "sensitive": { "type": "boolean" },
+                "hash": { "type": "string" },
+                "hash_algorithm": { "type": "string" },
+                "dataset_link": { "type": "string" }
+              }
+            }
+          }
+        },
+        "data_schema": { "type": "string" },
+        "model_artifact": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "hash": { "type": "string" },
+            "hash_algorithm": { "type": "string" }
+          }
+        },
+        "source_code_url": { "type": "string" },
+        "model_origin": { "type": "string" }
+      }
+    },
+    "ownership_and_governance": {
+      "type": "object",
+      "required": ["owners"],
+      "additionalProperties": true,
+      "properties": {
+        "owners": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "contact": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "technical_specifications": {
+      "type": "object",
+      "required": [
+        "model_parameters",
+        "training_parameters",
+        "preprocessing_steps",
+        "post_training_steps",
+        "hyperparameter_tuning_steps",
+        "inference_requirements"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "model_parameters": {
+          "type": "object",
+          "required": ["model_architecture", "ontology_and_semantic_mapping", "libraries"],
+          "additionalProperties": true,
+          "properties": {
+            "model_architecture": { "type": "string" },
+            "ontology_and_semantic_mapping": {
+              "type": "object",
+              "required": ["ontologies"],
+              "additionalProperties": true,
+              "properties": {
+                "ontologies": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "semantic_models": { "type": "string" },
+                "external_factors": { "type": "string" }
+              }
+            },
+            "input_format": { "type": "string" },
+            "output_format": { "type": "string" },
+            "format": { "type": "string" },
+            "libraries": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "training_parameters": {
+          "type": "object",
+          "required": ["training_methodology"],
+          "additionalProperties": true,
+          "properties": {
+            "training_methodology": { "type": "string" },
+            "data_card_link": { "type": "string" },
+            "dependencies": { "type": "string" }
+          }
+        },
+        "preprocessing_steps": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "post_training_steps": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "hyperparameter_tuning_steps": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "inference_requirements": {
+          "type": "object",
+          "required": ["software", "hardware", "deployment_constraints", "model_output", "inference_format"],
+          "additionalProperties": true,
+          "properties": {
+            "software": { "type": "string" },
+            "hardware": { "type": "string" },
+            "deployment_constraints": { "type": "string" },
+            "model_output": {
+              "type": "object",
+              "additionalProperties": true,
+              "properties": {
+                "output_format": { "type": "string" },
+                "coordinate_base_used": { "type": "string" },
+                "geolocation_rules": { "type": "string" }
+              }
+            },
+            "inference_format": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "name": { "type": "string" },
+                  "version": { "type": "string" },
+                  "data_type": { "type": "string" },
+                  "serialization": { "type": "string" },
+                  "protocol": { "type": "string" },
+                  "notes": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "evaluation_and_performance": {
+      "type": "object",
+      "required": [
+        "metrics",
+        "evaluation_infrastructure",
+        "evaluation_data",
+        "evaluation_team",
+        "reviewers",
+        "continuous_monitoring",
+        "benchmark_standard"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "metrics": {
+          "type": "object",
+          "required": ["type", "value"],
+          "additionalProperties": true,
+          "properties": {
+            "type": { "type": "string" },
+            "value": { "type": "string" },
+            "description": { "type": "string" },
+            "decision_thresholds": { "type": "string" },
+            "slice": { "type": "string" },
+            "assumptions": { "type": "string" },
+            "confidence_interval": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "lower_bound": { "type": "string" },
+                "upper_bound": { "type": "string" }
+              }
+            }
+          }
+        },
+        "evaluation_infrastructure": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "hardware_requirements": { "type": "string" },
+            "evaluation_constraints": { "type": "string" },
+            "other_evaluation_requirements": { "type": "string" }
+          }
+        },
+        "evaluation_data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "version": { "type": "string" },
+              "source": { "type": "string" }
+            }
+          }
+        },
+        "evaluation_team": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "role": { "type": "string" },
+              "affiliation": { "type": "string" },
+              "expertise": { "type": "string" },
+              "evaluation_type": { "type": "string" },
+              "contact": { "type": "string" }
+            }
+          }
+        },
+        "evaluation_objective": { "type": "string" },
+        "evaluation_system": { "type": "string" },
+        "bias_analysis": { "type": "string" },
+        "fairness_metrics": { "type": "string" },
+        "environmental_impact_of_training": { "type": "string" },
+        "reviewers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "contact": { "type": "string" },
+              "date_reviewed": { "type": "string" }
+            }
+          }
+        },
+        "continuous_monitoring": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "string" },
+            "data_uri": { "type": "string" }
+          }
+        },
+        "benchmark_standard": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "version": { "type": "string" },
+              "source": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "limitations_and_constraints": {
+      "type": "object",
+      "required": ["limitations", "tradeoffs"],
+      "additionalProperties": false,
+      "properties": {
+        "limitations": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "tradeoffs": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "security_and_compliance": {
+      "type": "object",
+      "required": ["risk"],
+      "additionalProperties": false,
+      "properties": {
+        "security_card_link": { "type": "string" },
+        "risk": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "risk_type": { "type": "string" },
+              "mitigation_strategy": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
